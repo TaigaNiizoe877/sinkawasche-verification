@@ -1,0 +1,57 @@
+main
+  .col-12.col-md-11.m-auto
+    .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.mt-5.mb-2.border-bottom.border-4
+      .ps-4.d-flex.align-items-center
+        .fs-3 シフト管理
+        = link_to "全体カレンダー", staff_shifts_path(start_date: params[:start_date]), { method: :index, class: "bi bi-chevron-left ps-4 pt-2" }
+      .btn-toolbar.mb-2.mb-md-0.d-none.d-sm-flex
+        = render partial: "components/edit_btn", locals: { label_name: "シフト", path: bulk_input_staff_shifts_path(start_date: params[:start_date], staff_id: params[:staff_id]) }
+    .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.mb-2
+  = render partial: "components/flash_messages"
+
+  - staff = @staff
+  .col-12.d-flex.justify-content-center.mb-4.p-0
+    .card.col-12.col-lg-10.shadow.rounded.py-4
+      .col-auto.m-auto.mb-2
+        .fs-4.text-center.border-bottom #{Staff.find_by(id: params[:staff_id]).full_name}
+      .row.d-flex.justify-content-center
+        .col-11
+          = link_to staff_calendar_staff_shifts_path(start_date: Date.today.to_s, staff_id: params[:staff_id]) do
+            button.btn.btn-outline-primary.btn-sm.mx-1.rounded-pill.px-md-4
+              |今月
+          = month_calendar do |date|
+            .inner.pb-2.align-top
+              .text-black-50
+                = date.day
+              - shift = @staff_shifts.find_by(start_at: date.to_date.all_day)
+              .d-none.d-sm-none.d-md-none.d-lg-inline.d-xl-inline.d-xxl-inline
+                .form-group.m-0
+                  / PC表示
+                  - if shift.blank?
+                    .col.mb-3.mt-3.text-dark.small
+                      |未登録
+                  - else
+                    button.btn.btn-outline-primary.col-11.m-0.p-0.px-1.h-1.my-2.mb-5 data-bs-toggle="modal" data-bs-target="#exampleModal" data-date="#{date}" data-day="#{date.day}" data-wday="#{t('date.abbr_day_names')[date.to_date.wday]}" data-wdayNum="#{date.to_date.wday}"
+                      p.small.small.m-0
+                        = "開始: " + shift.start_at.strftime("%H:%M")
+                        br
+                        = "終了: " + shift.end_at.strftime("%H:%M")
+              .d-inline.d-sm-inline.d-md-inline.d-lg-none.d-xl-none.d-xxl-none
+                .form-group.m-0
+                  / スマホ表示
+                  - if shift.blank?
+                    .col.mb-3.mt-3.text-dark.small
+                      |未登録
+                  - else
+                    button.btn.btn-outline-primary.m-0.p-0.px-1.h-1.my-2#target data-bs-toggle="modal" data-bs-target="#exampleModal" data-date="#{date}" data-day="#{date.day}" data-wday="#{t('date.abbr_day_names')[date.to_date.wday]}" data-wdayNum="#{date.to_date.wday}" data-staff="#{params[:staff_id]}"
+                      i.bi.bi-search
+
+#exampleModal.modal.fade[tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"]
+  .modal-dialog
+    .modal-content
+      .modal-body.mb-3
+        button.btn-close[type="button" data-bs-dismiss="modal" aria-label="Close"]
+        .col-9.m-auto
+          .simple-calendar.target
+
+= javascript_include_tag "staff_shift_modal", "data-turbo-track": "reload", defer: true

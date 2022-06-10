@@ -1,0 +1,41 @@
+.simple-calendar
+  .calendar-heading.p-2.d-flex.justify-content-between
+    col-3.my-auto
+      = link_to calendar.url_for_previous_view, class: "text-decoration-none"
+        i.bi.bi-caret-left-fill.text-primary
+        =t('simple_calendar.week.previous', default: 'Previous')
+    col-3.my-auto
+      span.calendar-title.mx-2
+        = start_date.strftime("%Y年%m月")
+    col-3.my-auto
+      = link_to calendar.url_for_next_view, class: "text-decoration-none"
+        = t('simple_calendar.week.next', default: 'Next')
+        i.bi.bi-caret-right-fill.text-primary
+    - reservations = Reservation.where(start_at: start_date.to_datetime.all_month)
+  table.table-borderless
+    thead
+      tr
+        th.p-1.border-bottom-0.border-top
+          |時間
+        - date_range.slice(0, 7).each do |day|
+          th.p-0.border-bottom-0.border-top
+            = t('date.abbr_day_names')[day.wday]
+    tbody
+      - date_range.each_slice(7) do |week|
+        tr
+          td
+          - week.each do |day|
+            = content_tag :td, class: calendar.td_classes_for(day) do
+              - passed_block.call day, sorted_events.fetch(day, [])
+        - times.each do |time|
+          tr
+            th.text-dark.border-bottom-0.border-top
+              = time
+            - week.each do |day|
+              td
+                - if day < Date.current || check_reservation(reservations, day, time)
+                  .text-danger.opacity-50
+                    = '×'
+                - else
+                  = link_to new_reservation_path(day: day, time: time), class: "text-decoration-none text-primary" do
+                    = '◯'

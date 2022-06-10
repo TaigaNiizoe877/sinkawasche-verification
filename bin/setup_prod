@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "fileutils"
+
+# path to your application root.
+APP_ROOT = File.expand_path("..", __dir__)
+
+def system!(*args)
+  system(*args) || abort("\n== Command #{args} failed ==")
+end
+
+FileUtils.chdir APP_ROOT do
+  # This script is a way to set up or update your development environment automatically.
+  # This script is idempotent, so that you can run it at any time and get an expectable outcome.
+  # Add necessary setup steps to this file.
+
+  puts "== Installing dependencies =="
+  system! "gem install bundler --conservative"
+  system("bundle check") || system!("bundle install")
+
+  # puts "\n== Copy env.sample file =="
+  # system! "cp .env.sample .env"
+
+  # puts "\n== Copying sample files =="
+  # unless File.exist?("config/database.yml")
+  #   FileUtils.cp "config/database.yml.sample", "config/database.yml"
+  # end
+
+  puts "\n== Setup database =="
+  # db:migrate:resetすると、bin/rspecが一度だけエラーになる->２回目以降は正常に動作(bin/rspecが変更を検知して、rspec/setupを行うが、db:applyが行われないことが原因)
+  # system! "bin/rails db:migrate:reset"
+  system! "bin/rails db:apply"
+  # system! "bin/rails db:seed"
+
+  puts "\n== Doing assets:precompile =="
+  system! "RAILS_ENV=production bin/rails assets:precompile"
+
+  puts "\n== Removing old logs and tempfiles =="
+  system! "bin/rails log:clear tmp:clear"
+
+  puts "\n== Restarting application server =="
+  system! "bin/rails restart"
+end

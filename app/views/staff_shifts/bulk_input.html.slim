@@ -1,0 +1,68 @@
+main
+  .col-12.col-md-11.m-auto
+    .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.mt-5.mb-2.border-bottom.border-4
+      .ps-4.d-flex.align-items-center
+        .fs-3 シフト管理
+        = link_to "スタッフカレンダー", staff_calendar_staff_shifts_path(start_date: params[:start_date], staff_id: params[:staff_id]), { method: :index, class: "bi bi-chevron-left ps-4 pt-2" }
+    = render partial: "components/flash_messages"
+
+  .col-12.col-sm-10.m-auto.mb-4
+    = form_with url: bulk_chenge_input_staff_shifts_path, data: { turbo: false }, method: :get do |form|
+      = form.hidden_field :start_date, value: params[:start_date]
+      = form.hidden_field :staff_id, value: params[:staff_id]
+      = form.hidden_field :input_data, value: shape_data(@input_data)
+      .card.shadow.rounded.py-4
+        .card-header.bg-white.border-0.bg-light
+          h3
+            |一括変更
+        .row.d-flex.justify-content-center.p-3
+          .col-6
+            .form-group.m-2.justify-content-center
+              = form.collection_select :bulk_start_at, params[:times],:first, :first, {selected: params[:times].first, include_blank: ""}, {class: "form-select shadow-sm mt-2"}
+              = form.collection_select :bulk_end_at, params[:times],:first, :first, {selected: params[:times].last, include_blank: ""}, {class: "form-select shadow-sm mt-2"}
+
+          .col-6
+            h8 適応する曜日
+            .d-flex
+              - wday = ["日", "月", "火", "水", "木", "金", "土"].each_with_index do |wday, index|
+                .p-0
+                  = form.check_box :wday, { checked: true, class: "form-check-input mx-1 mb-1 shadow-sm", name: "wday[#{index}]", id: "#{index}_wday"}
+                  = form.label wday, class: "form-check-label p-0"
+        .row
+          .col.d-flex.justify-content-center.m-2
+            = render partial: "components/submit_btn", locals: { label_name: "反映", f: form }
+
+  .col-12.col-sm-10.m-auto.mb-4
+    .card.shadow.rounded.py-4
+      .col-auto.m-auto.mb-2
+        .fs-4.text-center.border-bottom #{Staff.find_by(id: params[:staff_id]).full_name}
+      .row.d-flex.justify-content-center
+        .col-11
+          = link_to bulk_input_staff_shifts_path(start_date: Date.today.to_s, staff_id: params[:staff_id]) do
+            button.btn.btn-outline-primary.btn-sm.mx-1.rounded-pill.px-4
+              |今月
+          = form_with url: bulk_register_staff_shifts_path, data: { turbo: false }, method: :post do |form|
+            = form.hidden_field :start_date, value: params[:start_date]
+            = form.hidden_field :staff_id, value: params[:staff_id]
+            - count = 0
+            = month_calendar do |date|
+              - data = @input_data[date.to_s].presence || {}
+              .inner.pb-2
+                .text-black-50
+                  = date.day
+                .form-group.m-2
+                  - if date.past?
+                    select.form-select-sm.shadow-sm.mb-2.col-12[disabled]
+                      option[selected]
+                        = data[:start_at]&.to_datetime&.strftime("%H:%M")
+                    select.form-select-sm.shadow-sm.mb-2.col-12[disabled]
+                      option[selected]
+                        = data[:end_at]&.to_datetime&.strftime("%H:%M")
+                  - else
+                    = form.hidden_field :date, {value: date, name: "data[#{count}][date]", id: "#{count}_date"}
+                    = form.collection_select :start_at, params[:times], :first, :first, {selected: data[:start_at]&.to_datetime&.strftime("%H:%M"), include_blank: ''}, {name: "data[#{count}][start_at]", id: "#{count}_start_at", class: "form-select-sm shadow-sm mb-2 col-12"}
+                    = form.collection_select :end_at, params[:times], :first, :first, {selected: data[:end_at]&.to_time&.strftime("%H:%M"), include_blank: ''}, {name: "data[#{count}][end_at]", id: "#{count}_end_at", class: "form-select-sm shadow-sm mb-2 col-12"}
+              - count += 1
+            .row
+              .col.d-flex.justify-content-center.m-2
+                = render partial: "components/submit_btn", locals: { f: form }

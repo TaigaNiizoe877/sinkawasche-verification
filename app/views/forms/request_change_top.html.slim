@@ -1,0 +1,20 @@
+.container.mt-md-5.mt-2
+  .row.justify-content-center
+    .card.col-11.col-md-6.col-xl-4.shadow.rounded-2.mt-md-5
+      .card-header.bg-white.text-center
+        .mx-auto.mt-3
+          i.bi.bi-person-circle.fs-1.text-warning
+      .card-body
+        = form_with namespace: "reservation", url: forms_request_change_login_path, method: :post do |f|
+          .mt-2.mb-2
+            label for="inputPassword" class="fst-italic text-dark" Password
+            .input-group
+              i.input-group-text.bi.bi-key
+              = f.password_field :password, name: "password", class: "form-control shadow-sm", id: "inputPassword", required: "true"
+              = f.hidden_field :reservation_id, value: @reservation_id
+          .mt-4.mb-1.text-center
+            button.w-100.btn.btn-lg.btn-outline-primary.btn-block.shadow-sm type="submit"
+              i.bi.bi-unlock-fill  Login
+          .d-flex.justify-content-end.mt-3
+            = link_to "/forgot_password/", { class: "link-secondary" }, data: { turbo: false }
+              i.bi.bi-question-circle  Passwordを忘れた方はこちら

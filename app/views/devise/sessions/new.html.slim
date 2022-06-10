@@ -1,0 +1,33 @@
+.container.mt-md-5.mt-2
+  .row.justify-content-center
+    .card.col-11.col-md-5.col-xl-4.shadow.rounded-2
+      .card-header.bg-white.text-center
+        .mx-auto.mt-3
+          i.bi.bi-person-circle.fs-1.text-warning
+        .card-title.text-center.mt-2
+          h3.text-dark.fst-italic style="text-shadow: 1px 1px 2px orange" Please Sign in
+      .card-body
+        = form_for(resource, as: resource_name, url: session_path(resource_name), data: { turbo: false }) do |f|
+          .mb-2
+            label for="inputEmail" class="fst-italic text-dark" Email
+            .input-group
+              i.input-group-text.bi.bi-envelope
+              = f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control shadow-sm", id: "inputEmail"
+          .mt-2.mb-2
+            label for="inputPassword" class="fst-italic text-dark" Password
+            .input-group
+              i.input-group-text.bi.bi-key
+              = f.password_field :password, class: "form-control shadow-sm", id: "inputPassword", autocomplete: "current-password"
+          - if devise_mapping.rememberable?
+            .form-check
+              = f.check_box :remember_me, class: "form-check-input"
+              = f.label :remember_me
+          .mt-4.mb-1.text-center
+            button.w-100.btn.btn-lg.btn-outline-primary.btn-block.shadow-sm type="submit"
+              i.bi.bi-unlock-fill  Login
+      .card-footer.bg-white.mt-2.mb-2
+        .d-flex.justify-content-start.mt-2
+          = link_to new_staff_password_path(resource_name), { class: "link-info" }, data: { turbo: false }
+            i.bi.bi-question-circle  Passwordを忘れた方はこちら
+
+        / = render "devise/shared/links"

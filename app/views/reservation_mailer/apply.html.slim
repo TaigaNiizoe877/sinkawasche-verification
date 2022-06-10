@@ -1,0 +1,73 @@
+p
+  = "#{@customer.full_name}様"
+p
+  | この度は、sinkawacheにご予約いただき誠にありがとうございます。
+p
+  | 下記内容にて予約申込が完了しました。
+p
+  br
+p
+  | 【ご注意事項】
+p
+  | まだご予約は確定しておりません。
+p
+  | 担当者が予約内容を確認のうえ、メールにて予約完了のご連絡をさせていただきます。
+p
+  span.text-danger.ms-2
+    | ご予約をお受けできないこともございます。予めご了承ください。
+p
+  br
+p
+  | ───────────────
+p
+  = "予約日　：#{@reservation.start_end_at_to_string}"
+p
+  = "氏名　　：#{@customer.full_name} 様"
+p
+  = "作業場所：#{@reservation.working_location.full_address}"
+p
+  = "電話番号：#{@customer.phone}"
+p
+  = "合計金額：¥#{@reservation.total_price.to_s(:delimited)}"
+p
+  | ==小計==
+p
+  - @reservation.reservation_infos.each.with_index(1) do |info, i|
+    = "<#{i}台目>"
+    p
+      = "#{info.car_wash_menu.name}: ¥#{info.car_wash_menu.price.to_s(:delimited)}"
+    - info.car_wash_options.each do |op|
+      p
+        = "#{op.name}: ¥#{op.price.to_s(:delimited)}"
+      br
+  - if @reservation.travel_fee.to_i > 0
+    p
+      | <その他>
+    p
+      = "出張料金: ¥#{@reservation.travel_fee.to_s(:delimited)}"
+  - elsif @reservation.travel_fee.nil?
+    p
+      | <その他>
+    p
+      = "出張料金: 未確定(予約確定前にスタッフより連絡させていただきます。)"
+p
+  | =======
+p
+  | ───────────────
+p
+  br
+p
+  | 予約内容のお問い合わせの際は、氏名と作業場所をお知らせください。
+p
+  br
+p
+  | 予約内容を変更する場合は、お早めにご連絡ください。
+p
+  | キャンセルにつきましては、2日前まで対応しております。
+p
+  br
+p
+  | 変更依頼はこちら
+p
+  = link_to "【Sinkawasche】変更依頼ページ", "#{forms_request_change_top_url(reservation_id: @reservation.id)}"
+p

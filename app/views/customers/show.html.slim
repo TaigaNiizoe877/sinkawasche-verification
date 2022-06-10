@@ -1,0 +1,130 @@
+main
+  .col-12.col-md-11.m-auto.mb-5
+    .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.mt-5.mb-2.border-bottom.border-4
+      .ps-2.d-flex.align-items-center
+        .fs-3 お客様詳細
+        = link_to "一覧に戻る", "#{customers_path}", { method: :index, class: "bi bi-chevron-left ps-4 pt-2" }
+      .btn-toolbar.mb-2.mb-md-0.d-none.d-sm-flex
+        = render partial: "components/edit_btn", locals: { label_name: "編集する", path: edit_customer_path(@customer.id) }
+        - unless @customer&.reservations.present?
+          = render partial: "components/delete_btn", locals: { path: customer_path(@customer.id) }
+    = render partial: "components/flash_messages"
+  .container
+    .row
+      .col-lg-7
+        .card.col-sm-12.shadow.p-3.mb-3.bg-body.rounded
+          .card-body
+            .row
+              .col-5.col-sm-2
+                | 名前
+              .col-7.col-sm-10.fw-bold
+                | #{@customer.full_name.presence || "-"}
+          .card-body style="background:#EEEEEE;"
+            .row
+              .col-5.col-sm-2
+                | フリガナ
+              .col-7.col-sm-10.fw-bold
+                | #{@customer.full_name_kana.presence || "-"}
+
+          .card-body
+            .row
+              .col-5.col-sm-2
+                | #{Customer.human_attribute_name(:email)}
+              .col-7.col-sm-10.fw-bold
+                | #{@customer.email.presence || "-"}
+
+          .card-body style="background:#EEEEEE;"
+            .row
+              .col-5.col-sm-2
+                | #{Customer.human_attribute_name(:phone)}
+              .col-7.col-sm-10.fw-bold
+                | #{@customer.phone.presence || "-"}
+
+          .card-body
+            .row
+              .col-5.col-sm-2
+                | #{Customer.human_attribute_name(:postal_code)}
+              .col-7.col-sm-10.fw-bold
+                | #{@customer.postal_code.presence || "-"}
+
+          .card-body style="background:#EEEEEE;"
+            .row
+              .col-5.col-sm-2
+                | #{Customer.human_attribute_name(:prefecture)}
+              .col-7.col-sm-10.fw-bold
+                | #{@customer.prefecture.presence || "-"}
+
+          .card-body
+            .row
+              .col-5.col-sm-2
+                | #{Customer.human_attribute_name(:address)}
+              .col-7.col-sm-10.fw-bold
+                | #{(@customer.address_first + " " + @customer.address_second).presence || "-"}
+
+          .card-body style="background:#EEEEEE;"
+            .row
+              .col-5.col-sm-2
+                | #{Customer.human_attribute_name(:building)}
+              .col-7.col-sm-10.fw-bold
+                | #{@customer.building.presence || "-"}
+
+          .card-body
+            .row
+              .col-5.col-sm-2
+                | #{Customer.human_attribute_name(:memo)}
+              .col-7.col-sm-10.fw-bold
+                | #{simple_format(@customer.memo).presence || "-"}
+
+          .card-body style="background:#EEEEEE;"
+            .row
+              .col-5.col-sm-2
+                | #{Customer.human_attribute_name(:aware_route)}
+              .col-7.col-sm-10.fw-bold
+                | #{@customer.aware_route.present? ? Customer.aware_routes_i18n[@customer.aware_route] : "-"}
+
+          .card-body
+            .row
+              .col-5.col-sm-2
+                | #{Customer.human_attribute_name(:notice)}
+              .col-7.col-sm-10.fw-bold
+                | #{@customer.notice.present? ? "有" : "無"}
+        .container
+          .row.mb-3
+              - if @customer&.reservations.present?
+                center
+                  = render partial: "components/edit_btn", locals: { label_name: "編集する", path: edit_customer_path(@customer.id) }
+              - else
+                .col-sm-6.col-md-6.col-6 style="text-align: right;"
+                  = render partial: "components/edit_btn", locals: { label_name: "編集する", path: edit_customer_path(@customer.id) }
+                .col-sm-6.col-md-6.col-6
+                  = render partial: "components/delete_btn", locals: { path: customer_path(@customer.id) }
+
+      .col-lg-5
+        .card.col-sm-12.shadow.mb-3.rounded
+          .card-header
+            .card-title.text-center.mt-2
+              i.bi.bi-pin-map-fill
+              span 作業場所
+          .card-body
+            .d-flex.justify-content-center
+              = link_to new_working_location_path(customer_id: @customer.id), class: "button btn btn-outline-secondary rounded col-10 py-4 mb-3 text-decoration-none", style: "border-style: dashed;" do
+                .text-dark.small
+                  i.bi.bi-plus-square-dotted.pl-1.mx-1
+                  | 新しい住所
+            .col-12
+              - @customer.working_locations.sort_by{|val| val.updated_at }.reverse.each do |wl|
+                .row.border.shadow.rounded.col-10.pt-4.mb-3.mx-auto
+                  p.m-0.text-dark.small.text-start.px-4
+                    | #{wl.postal_code}
+                  p.m-0.text-dark.small.text-start.px-4
+                    | #{wl.full_address}
+                  .row.col-12.text-right.mx-3.mt-4.mb-1
+                    .col-11.d-flex.justify-content-end
+                      = link_to edit_working_location_path(wl.id, customer_id: @customer.id), class: "text-decoration-none me-2" do
+                        .text-dark.small
+                          i.bi.bi-pencil-square
+                          | 編集
+                      = link_to working_location_path(wl.id), data: { turbo_method: :delete }, class: "text-decoration-none" do
+                        .text-dark.small
+                          i.bi.bi-trash
+                          | 削除

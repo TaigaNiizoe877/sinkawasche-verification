@@ -1,0 +1,36 @@
+.container.justify-content-center.col-12.col-md-10.col-xl-6.my-5
+  .card.shadow.rounded
+    button.btn.btn-link.d-blok.text-decoration-none.m-0.p-0[data-bs-toggle="collapse" href="#collapseCarDetail" role="button" aria-expanded="false" aria-controls="collapseExample"]
+      .card-header.border-0
+        .card-title.d-inline-flex.flex-row.align-items-center.mt-2
+          i.bi.bi-hand-index.fs-6.text-success.me-1
+          span.text-dark.fst-italic.fs-5 予約確定までのステップ
+    #collapseCarDetail.collapse
+      .card-body
+        label.fst-italic.fw-bold.text-dark
+          |1. お申し込み
+        .row
+          .col-12.mt-2
+            p.m-0
+              |予約ページにて、「お申し込みを行う」ボタンを押すと、入力したメールアドレス宛に申込完了メールが送信されお申し込みとなります。
+            span.text-danger.ms-2 ※まだ予約は確定しておりません。
+        .text-center.mt-4
+          i.bi.bi-arrow-down-circle.h2.text-success
+      .card-body
+        label.fst-italic.fw-bold.text-dark
+          |2. 予約完了
+        .row
+          .col-12.mt-2
+            p
+              |担当者が予約内容を確認のうえ、メールにて予約完了のご連絡をさせていただきます。
+            span.text-danger.ms-2 ※ご予約をお受けできないこともございます。予めご了承ください。
+      .card-body
+        i.bi.bi-exclamation-triangle-fill.fs-6.text-danger.me-1
+        label.fw-bold.text-dark
+          |【注意事項】
+        .row
+          .col-12.mt-2
+            p  
+              | 予約完了後にキャンセルされる場合は、メール内に記載されているお問い合わせ先までご連絡ください。連絡なくキャンセルされるとサービスのご利用を制限させていただくことがあります。
+              br
+              | お申し込み時にご登録いただいた連絡先が無効な場合、ご予約をキャンセルさせていただくことがあります。

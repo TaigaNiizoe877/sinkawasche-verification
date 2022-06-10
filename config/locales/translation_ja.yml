@@ -1,0 +1,198 @@
+ja:
+  activerecord:
+    models:
+      car_maker: 自動車メーカー  #g
+      car_model: 車のモデル  #g
+      car_size: 車のサイズ  #g
+      car_wash_menu: 洗車メニュー  #g
+      car_wash_option: 洗車オプション  #g
+      customer: お客様  #g
+      reservation: 予約  #g
+      reservation_car_wash_option: 予約洗車オプション  #g
+      reservation_info: 予約情報  #g
+      staff: スタッフ  #g
+      staff_shift: スタッフシフト  #g
+      time_buffer: タイムバッファ  #g
+      working_location: 作業場所  #g
+
+    attributes:
+      car_maker:
+        car_models: 車種  #g
+        discard_at: 破棄  #g
+        name: 名前  #g
+
+      car_model:
+        car_maker: :activerecord.models.car_maker  #g
+        discard_at: 破棄  #g
+        name: 名前  #g
+
+      car_size:
+        car_wash_menus: 洗車メニュー  #g
+        car_wash_options: 洗車オプション  #g
+        discard_at: 破棄  #g
+        memo: メモ  #g
+        name: サイズ  #g
+
+      car_wash_menu:
+        car_size_id: :activerecord.models.car_size_id  #g
+        discard_at: 破棄  #g
+        memo: メモ  #g
+        name: コース名  #g
+        required_time: 作業時間  #g
+        price: 価格  #g
+        recommend: おすすめ表示 #g
+        detail_memo: コース詳細説明 #g
+        status: 公開・非公開 #g
+
+      car_wash_option:
+        car_size_id: :activerecord.models.car_size_id  #g
+        discard_at: 破棄  #g
+        required_time: 作業時間  #g
+        memo: メモ  #g
+        detail_memo: 詳細説明
+        name: オプション名  #g
+        price: 価格  #g
+        reservation_car_wash_options: 予約洗車オプション  #g
+        status: 公開・非公開 #g
+
+      customer:
+        address: 住所  #g
+        address_first: 住所
+        address_second: 番地以下
+        aware_route: 認識ルート  #g
+        building: 建物  #g
+        discard_at: 破棄  #g
+        email: Eメール  #g
+        family_name: 姓  #g
+        family_name_kana: セイ  #g
+        latitude: 緯度  #g
+        longitude: 経度  #g
+        memo: メモ  #g
+        name: 名  #g
+        name_kana: メイ  #g
+        notice: お知らせ  #g
+        password_digest: パスワード  #g
+        phone: 電話番号  #g
+        postal_code: 郵便番号  #g
+        prefecture: 都道府県  #g
+        reservations: 予約  #g
+        working_locations: 作業場所  #g
+
+      reservation:
+        customer: :activerecord.models.customer  #g
+        discard_at: 破棄  #g
+        end_at: 終了時間  #g
+        total_price: 合計金額
+        memo: メモ  #g
+        reservation_infos: :activerecord.models.reservation_info  #g
+        start_at: 開始時間  #g
+        status: 状態  #g
+        working_location: :activerecord.models.working_location  #g
+        staff: :activerecord.models.staff  #g
+      reservation/reservation_infos:
+        car_model_name: 車種名
+
+      reservation_car_wash_option:
+        car_wash_option: :activerecord.models.car_wash_option  #g
+        discard_at: 破棄  #g
+        reservation_info: :activerecord.models.reservation_info  #g
+
+      reservation_info:
+        car_model_name: 車種名  #g
+        car_wash_menu: :activerecord.models.car_wash_menu  #g
+        discard_at: 破棄  #g
+        reservation_car_wash_options: 予約洗車オプション  #g
+        reservation_info: :activerecord.models.reservation_info  #g
+        reservation_infos: 予約情報  #g
+        total_price: 合計金額  #g
+
+      staff:
+        address: 住所  #g
+        birthdate: 生年月日  #g
+        confirmation_sent_at: 送信された確認  #g
+        confirmation_token: 確認トークン  #g
+        confirmed_at: 確認  #g
+        current_sign_in_at: 現在のサインイン  #g
+        current_sign_in_ip: 現在のサインインIP  #g
+        email: Eメール  #g
+        password: パスワード  #g
+        password_confirmation: パスワード確認
+        encrypted_password: 暗号化されたパスワード  #g
+        failed_attempts: 失敗した試行  #g
+        phone: 電話番号
+        gender: 性別  #g
+        hobby: 趣味  #g
+        birthday: 生年月日  #g
+        last_sign_in_at: 最後のサインイン  #g
+        last_sign_in_ip: 最後のサインインIP  #g
+        locked_at: ロック  #g
+        memo: メモ  #g
+        family_name: 姓  #g
+        name: 名  #g
+        postal_code: 郵便番号  #g
+        prefecture: 都道府県  #g
+        remember_created_at: 作成されたことを忘れないでください  #g
+        reset_password_sent_at: 送信されたパスワードをリセット  #g
+        reset_password_token: パスワードトークンをリセット  #g
+        role: 役職  #g
+        unconfirmed_email: 未確認のメール  #g
+        unlock_token: トークンのロックを解除  #g
+
+      staff_shift:
+        discard_at: 破棄  #g
+        end_at: 終了  #g
+        staff_id: :activerecord.models.staff_id  #g
+        start_at: 開始  #g
+
+      time_buffer:
+        discard_at: 破棄  #g
+        staff_id: :activerecord.models.staff_id  #g
+        time: 時間  #g
+
+      working_location:
+        address: 住所  #g
+        address_first: 住所
+        address_second: 番地以下
+        building: 建物  #g
+        discard_at: 破棄  #g
+        latitude: 緯度  #g
+        longitude: 経度  #g
+        postal_code: 郵便番号  #g
+        prefecture: 都道府県  #g
+        reservations: 予約  #g
+        user: :activerecord.models.user  #g
+
+      travel_fee:
+        prefecture: 都道府県
+        address: 住所
+        price: 出張料
+
+  enums:
+    staff:
+      gender:
+        male: 男性
+        female: 女性
+        not_set: 未設定
+      role:
+        admin: 管理者
+        staff: スタッフ
+    customer:
+      aware_route:
+        home_page: ホームページ
+        flyer: チラシ
+        review: 口コミ
+        introduction: ご紹介
+        other: その他
+    reservation:
+      status:
+        applying: 仮予約
+        approval: 予約確定
+        completed: 作業完了
+        cancel: キャンセル
+    request_change:
+      status:
+        read: 既読
+        unread: 未読
+      reservation_type:
+        change: 予約変更
+        cancel: キャンセル

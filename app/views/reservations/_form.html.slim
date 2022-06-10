@@ -1,0 +1,145 @@
+.card.col-sm-12.shadow.p-3.mb-4.bg-body.rounded
+  .card-header.bg-white.border-bottom
+    .card-title.d-inline-flex.flex-row.align-items-center.mt-2
+      span.text-dark.fs-4 予約情報
+  .card-body.fs-6.ps-4
+    .col-sm-6.py-2
+      label.pb-2  お客様名
+      = f.hidden_field :res_id, value: f.object.id, class: "js-getId"
+      = f.hidden_field :customer_id, value: f.object.customer_id
+      = f.text_field :staff_name, value: f.object.customer.full_name, class: "form-control", disabled: "true"
+    .col-sm-6.pb-2
+      label.pb-2  作業場所住所
+      = f.collection_select :working_location_id, WorkingLocation.where(customer_id: f.object.customer_id), :id, :full_address, { selected: f.object.working_location_id }, { class: "form-select js-changeDatetime js-getWorkingLocation" }
+    .col-sm-6.pb-2
+      label.pb-2  開始時刻
+      = f.datetime_field :start_at, class: "form-control js-changeDatetime js-getStartAt"
+    .col-sm-6.pb-2
+      label.pb-2  終了時刻
+      = f.datetime_field :end_at, class: "form-control js-changeDatetime js-getEndAt"
+    .col-sm-6.pb-2
+      label.pb-2  作業スタッフ名
+      - if current_staff.staff? && f.object.staff.present?
+        = f.hidden_field :staff_id, value: f.object.staff_id
+        = f.text_field :staff_name, value: f.object.staff.full_name, class: "form-control", disabled: "true"
+      - else
+        - staffs = f.object.present? ? Staff.all : Staff.role_staff.filter_map { |staff| staff.available(f.object&.start_at, f.object&.calculate_required_time, f.object&.working_location&.postal_code, f.object) }
+        = f.select :staff_id, options_for_select(staffs&.map { |s| [s.full_name, s.id]}, f.object.staff_id), { include_blank: "選択してください"}, { class: "form-select js-changeOptions"}
+    .col-sm-6.pb-2
+      label.pb-2  ステータス
+      .form-radio
+        = f.collection_radio_buttons :status, Reservation.statuses_i18n, :first, :last, checked: (f.object.status), class: "form-control" do |rs|
+          = rs.label(class: "form-check-label p-0") { rs.radio_button(class: "form-check-input shadow-sm mx-1 mb-1") + rs.text }
+    .col-sm-6.pb-2
+      label.pb-1 合計金額自動計算
+      .form-radio.pb-2
+        = f.radio_button :auto_culc_flag, true, { checked: f.object.auto_culc_flag == true, id: "reservation[auto_culc_total_price][true]", class: "form-check-input shadow-sm mx-1 mb-1 js-autoCulcFlag" }
+        = f.label "する", for: "reservation[auto_culc_flag][true]", class: "form-check-label p-0"
+        = f.radio_button :auto_culc_flag, false, { checked: f.object.auto_culc_flag == false, id: "reservation[auto_culc_total_price][false]", class: "form-check-input shadow-sm mx-1 mb-1 js-autoCulcFlag" }
+        = f.label "しない", for: "reservation[auto_culc_flag][false]", class: "form-check-label p-0"
+      label.pb-2  合計金額
+      = f.text_field :total_price, value: f.object.total_price || 0, class: "form-control js-toggleReadOnly", readonly: f.object.auto_culc_flag
+    .col-sm-6.pb-2
+      label.pb-2  出張料金
+      = f.text_field :travel_fee, class: "form-control", placeholder: "入力して下さい", required: "true"
+    .col-sm-8.pb-2
+      label.pb-2  ご連絡事項
+      = f.text_area :memo, size: "30x10", class: "form-control"
+
+- if f.object.reservation_infos.present?
+  - deleted_num = 0
+  - f.object.reservation_infos.each.with_index(1) do |info, index|
+    - is_display = info&._destroy ? "none" : ""
+    - deleted_num += 1 if info&._destroy
+    .card.col-sm-12.shadow.p-3.mb-2.bg-body.rounded.js-parentTarget style="display: #{is_display}"
+      .card-header.bg-white.border-bottom
+        .card-title.d-inline-flex.flex-row.align-items-center.mt-2
+          span.js-changeText.text-dark.fs-4 予約車#{index - deleted_num}台目
+          = f.hidden_field :_destroy, value: info&._destroy ? "1" : "0", class: "js-infoDestroyFlag", name: "reservation[reservation_infos_attributes][#{index}][_destroy]"
+          = f.hidden_field :reservation_info, value: info.id, name: "reservation[reservation_infos_attributes][#{index}][id]"
+          = f.hidden_field :car_num, value: index, class: "js-carCount"
+      .card-body.fs-6.ps-4
+        .col-sm-6.pb-2
+          label.pb-2 車サイズ
+          .form-radio
+            = f.collection_radio_buttons :car_size_id, CarSize.all, :id, :name, checked: info.car_size_id, class: "form-control" do |s|
+              = s.label(class: "form-check-label pe-2", for: "reservation[reservation_infos_attributes][#{index}][car_size_id][#{s.object.id}]") { s.radio_button(class: "form-check-input shadow-sm mx-1 mb-1 js-changeSize", id: "reservation[reservation_infos_attributes][#{index}][car_size_id][#{s.object.id}]", name: "reservation[reservation_infos_attributes][#{index}][car_size_id]") + s.text }
+        .col-sm-6.pb-2
+          label.pb-2 洗車コース
+          .form-radio.js-changeMenuField
+            .js-toggleShow
+              = f.collection_radio_buttons :car_wash_menu_id, CarWashMenu.where(car_size_id: info.car_size_id, status: true), :id, :name, checked: info.car_wash_menu_id, class: "form-control" do |m|
+                = f.label(class: "form-check-label pe-2", for: "reservation[reservation_infos_attributes][#{index}][car_wash_menu_id][#{m.object.id}]") { m.radio_button(class: "form-check-input shadow-sm mx-1 mb-1 js-toggleDisabled", id: "reservation[reservation_infos_attributes][#{index}][car_wash_menu_id][#{m.object.id}]", name: "reservation[reservation_infos_attributes][#{index}][car_wash_menu_id]") + m.text + "/¥#{m.object.price.to_fs(:delimited)}" }
+        .col-sm-6.pb-2
+          label.pb-2 車種名
+          = f.text_field :car_model_name, value: info.car_model_name, class: "form-control", name: "reservation[reservation_infos_attributes][#{index}][car_model_name]"
+
+        - if info.reservation_car_wash_options.present?
+          .col-sm-8.pb-2
+            label.pb-2 洗車オプション
+            .form-checkbox.js-changeOptionField
+                - CarWashOption.where(car_size_id: info.car_size_id, status: true).each.with_index(1) do |option, oi|
+                  .js-toggleShow
+                    - target = info.reservation_car_wash_options.find_by(reservation_info_id: info.id, car_wash_option_id: option.id)
+                    = f.hidden_field :reservation_car_wash_option_id, value: target&.id, name: "reservation[reservation_infos_attributes][#{index}][reservation_car_wash_options_attributes][#{oi}][id]"
+                    = f.check_box :car_wash_option_id, { checked: target.present?, id: "reservation[reservation_infos_attributes][#{index}][reservation_car_wash_options_attributes][#{oi}][car_wash_option_id][#{option.id}]", name: "reservation[reservation_infos_attributes][#{index}][reservation_car_wash_options_attributes][#{oi}][car_wash_option_id]", class: "form-check-input mx-1 mb-1 shadow-sm js-optionCount" }, option.id, nil
+                    = f.label "#{option.name}/¥#{option.price.to_fs(:delimited)}", class: "form-check-label pe-2", for: "reservation[reservation_infos_attributes][#{index}][reservation_car_wash_options_attributes][#{oi}][car_wash_option_id][#{option.id}]"
+                    = f.hidden_field :_destroy, value: option&._destroy ? "1" : "0", class: "js-destroyFlag", name: "reservation[reservation_infos_attributes][#{index}][reservation_car_wash_options_attributes][#{oi}][_destroy]"
+        - else
+          .col-sm-8.pb-2
+            label.pb-2 洗車オプション
+            .form-checkbox.js-changeOptionField
+                - CarWashOption.where(car_size_id: info.car_size_id, status: true).each.with_index(1) do |option, oi|
+                  .js-toggleShow
+                    = f.check_box :car_wash_option_id, { id: "reservation[reservation_infos_attributes][#{index}][reservation_car_wash_options_attributes][#{oi}][car_wash_option_id][#{option.id}]", name: "reservation[reservation_infos_attributes][#{index}][reservation_car_wash_options_attributes][#{oi}][car_wash_option_id]", class: "form-check-input mx-1 mb-1 shadow-sm js-optionCount" }, option.id, nil
+                    = f.label "#{option.name}/¥#{option.price.to_fs(:delimited)}", class: "form-check-label pe-2", for: "reservation[reservation_infos_attributes][#{index}][reservation_car_wash_options_attributes][#{oi}][car_wash_option_id][#{option.id}]"
+                    = f.hidden_field :_destroy, value: option&._destroy ? "1" : "0", class: "js-destroyFlag", name: "reservation[reservation_infos_attributes][#{index}][reservation_car_wash_options_attributes][#{oi}][_destroy]"
+
+        .d-flex.justify-content-end
+          .btn.js-addMenuField
+            i.bi.bi-plus-square.text-primary.fs-2
+          .btn.js-deleteMenuField
+            i.bi.bi-dash-square.text-secondary.fs-2
+
+- else
+  .card.col-sm-12.shadow.p-3.mb-2.bg-body.rounded.js-parentTarget
+    .card-header.bg-white.border-bottom
+      .card-title.d-inline-flex.flex-row.align-items-center.mt-2
+        span.js-changeText.text-dark.fs-4 予約車1台目
+        = f.hidden_field :_destroy, value: "0", class: "js-infoDestroyFlag", name: "reservation[reservation_infos_attributes][1][_destroy]"
+        = f.hidden_field :car_num, value: 1, class: "js-carCount"
+    .card-body.fs-6.ps-4
+      .col-sm-6.pb-2
+        label.pb-2 車サイズ
+        .form-radio
+          - CarSize.all.each.with_index(1) do |size, index|
+            = f.radio_button :car_size_id, value=size.id, checked: index == 1, id: "reservation[reservation_infos_attributes][1][car_size_id][#{size.id}]", name: "reservation[reservation_infos_attributes][1][car_size_id]", class: "form-check-input shadow-sm mx-1 mb-1 js-changeSize"
+            = f.label size&.name, for: "reservation[reservation_infos_attributes][1][car_size_id][#{size.id}]", class: "form-check-label text-uppercase pe-2"
+      .col-sm-6.pb-2
+        label.pb-2 洗車コース
+        .form-radio.js-changeMenuField
+          - CarWashMenu.where(car_size_id: 1, status: true).each.with_index(1) do |menu, index|
+            .js-toggleShow
+              = f.radio_button :car_wash_menu_id, value=menu.id, checked: index == 1, id: "reservation[reservation_infos_attributes][1][car_wash_menu_id][#{menu.id}]", name: "reservation[reservation_infos_attributes][1][car_wash_menu_id]", class: "form-check-input shadow-sm mx-1 mb-1 js-toggleDisabled"
+              = f.label "#{menu&.name}/¥#{menu&.price.to_fs(:delimited)}", for: "reservation[reservation_infos_attributes][1][car_wash_menu_id][#{menu.id}]", class: "form-check-label text-uppercase pe-2"
+      .col-sm-6.pb-2
+        label.pb-2 車種名
+        = f.text_field :car_model_name, class: "form-control", name: "reservation[reservation_infos_attributes][1][car_model_name]"
+      .col-sm-8.pb-3
+        label.pb-2 洗車オプション
+        .form-checkbox.js-changeOptionField
+          - CarWashOption.where(car_size_id: 1, status: true).each.with_index(1) do |option, oi|
+            .js-toggleShow
+              = f.check_box :car_wash_option_id, { id: "reservation[reservation_infos_attributes][1][reservation_car_wash_options_attributes][#{oi}][car_wash_option_id][#{option.id}]", name: "reservation[reservation_infos_attributes][1][reservation_car_wash_options_attributes][#{oi}][car_wash_option_id]", class: "form-check-input mx-1 mb-1 shadow-sm js-optionCount" }, option.id, nil
+              = f.label "#{option.name}/¥#{option.price.to_fs(:delimited)}", class: "form-check-label pe-2", for: "reservation[reservation_infos_attributes][1][reservation_car_wash_options_attributes][#{oi}][car_wash_option_id][#{option.id}]"
+              = f.hidden_field :_destroy, value: "0", class: "js-destroyFlag", name: "reservation[reservation_infos_attributes][1][reservation_car_wash_options_attributes][#{oi}][_destroy]"
+      .d-flex.justify-content-end
+        .btn.js-addMenuField
+          i.bi.bi-plus-square.text-primary.fs-2
+        .btn.js-deleteMenuField
+          i.bi.bi-dash-square.text-secondary.fs-2
+
+center.py-4
+  = render partial: "components/submit_btn", locals: { f: f }
+
+= javascript_include_tag "reservation", "data-turbo-track": "reload", defer: true

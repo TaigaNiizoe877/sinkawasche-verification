@@ -1,0 +1,54 @@
+script[src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"]
+.card.col-sm-12.shadow.p-3.mb-5.bg-body.rounded
+  .row.g-1.col-sm-12.col-md-12.col-lg-6
+    .col.col-sm-6.pb-2
+      label.pb-2  #{Customer.human_attribute_name(:family_name)}
+      = f.text_field :family_name, class: "form-control"
+    .col.col-sm-6.pb-2
+      label.pb-2  #{Customer.human_attribute_name(:name)}
+      = f.text_field :name, class: "form-control"
+  .row.g-1.col-sm-12.col-md-12.col-lg-6
+    .col.col-sm-6.pb-2
+      label.pb-2  #{Customer.human_attribute_name(:family_name_kana)}
+      = f.text_field :family_name_kana, class: "form-control"
+    .col.col-sm-6.pb-2
+      label.pb-2  #{Customer.human_attribute_name(:name_kana)}
+      = f.text_field :name_kana, class: "form-control"
+  .col-sm-6.pb-2
+    label.pb-2  #{Customer.human_attribute_name(:email)}
+    = f.text_field :email, class: "form-control"
+  .col-sm-6.pb-2
+    label.pb-2  #{Customer.human_attribute_name(:phone)}
+    span.text-danger.ms-2 ※「-」無しで記入してください
+    = f.text_field :phone, class: "form-control", pattern: "^[0-9]+$"
+  .col-sm-6.pb-2
+    label.pb-2  #{Customer.human_attribute_name(:postal_code)}
+    span.text-danger.ms-2 ※「-」無しで記入してください
+    = f.text_field :postal_code, class: "form-control", pattern: "^[0-9]+$", onkeyup: "AjaxZip3.zip2addr(this,'','customer[prefecture]','customer[address_first]');", placeholder: "例:8100000"
+  .col-sm-6.pb-2
+    label.pb-2  #{Customer.human_attribute_name(:prefecture)}
+    = f.text_field :prefecture, class: "form-control", readonly: true
+  .col-sm-6.pb-2
+    label.pb-2  市区町村
+    = f.text_field :address_first, class: "form-control", value: f.object.address_first, readonly: true
+  .col-sm-6.pb-2
+    label.pb-2  番地以下
+    span.text-danger.ms-2 ※必須 (「-」以外の記号は利用できません)
+    = f.text_field :address_second, class: "form-control", value: f.object.address_second
+  .col-sm-6.pb-2
+    label.pb-2  #{Customer.human_attribute_name(:building)}
+    = f.text_field :building, class: "form-control"
+  .col-sm-6.pb-2
+    label.pb-2  #{Customer.human_attribute_name(:aware_route)}
+    = f.select :aware_route, options_for_select(Customer.aware_routes.keys.map { |k| [I18n.t("enums.customer.aware_route.#{k}"), k] }, f.object.aware_route), {}, {class: 'form-select'}
+  .col-sm-6.pb-2
+    label.pb-2  #{Customer.human_attribute_name(:notice)}
+    .form-check.px-3
+      .form-switch
+        = f.check_box :notice, style: "transform: scale(2);", class: "form-check-input"
+  .col-sm-8.pb-2
+    label.pb-2  #{Customer.human_attribute_name(:memo)}
+    = f.text_area :memo, class: "form-control", size: "30x10", class: "form-control"
+
+center.pb-5
+  = render partial: "components/submit_btn", locals: { f: f }

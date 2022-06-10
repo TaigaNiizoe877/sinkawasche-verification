@@ -1,0 +1,225 @@
+= render partial: "progress", locals: { value: 80, text: "確認画面" }
+
+.container.justify-content-center.col-12.col-md-10.col-xl-6
+  .card.shadow.rounded
+    .card-body.pb-0
+      table.table
+        thead
+          tr
+            .col-3.fst-italic.fw-bold.text-dark style="text-shadow: 1px 1px 2px orange"
+              |予約内容
+        tbody
+          tr
+            th.col-4.align-bottom[scope="row"]
+              | 日付
+            td
+              = session[:day].to_date.strftime("%Y年%m月%d日")
+          tr
+            th.align-bottom[scope="row"]
+              | 時間
+            td
+              = session[:start_at].strftime("%H:%M") + "~" + session[:end_at].strftime("%H:%M")
+          tr
+            th.align-bottom[scope="row"]
+              |合計金額
+            td
+              - if session[:travel_fee].present?
+                = "¥" + session[:total_price]&.to_fs(:delimited) + "(内出張料 ¥#{session[:travel_fee].price.to_fs(:delimited)})"
+              - else
+                = "¥" + session[:total_price]&.to_fs(:delimited) + "(内出張料 予約申込後にスタッフよりご連絡させていただきます })"
+
+      .mb-4
+        button.btn.btn-outline-secondary[data-bs-toggle="collapse" href="#collapseCarDetail" role="button" aria-expanded="false" aria-controls="collapseExample"]
+          i.bi.bi-hand-index.fs-6.me-1
+          span.mx-2 予約詳細
+      .mb-4.small#collapseCarDetail.collapse
+
+        - session[:select_menus]&.each do |menu|
+          .card.rounded.mb-1
+            .card-header.border-bottom.border-warning.bg-light
+              .card-title.d-inline-flex.flex-row.align-items-center.m-0
+                = menu[:car_model_name].presence || CarMaker.find(menu[:car_maker_id]).name + "/" + CarModel.find(menu[:car_model_id]).name
+            .card-body
+              table.table.m-0
+                tbody
+                  tr
+                    th.align-bottom[scope="row"]
+                      |車のサイズ
+                    td
+                      = CarSize.find_by(id: menu[:car_size_id])&.name
+                  tr
+                    th.align-bottom[scope="row"]
+                      |洗車メニュー
+                    td
+                      = CarWashMenu.find_by(id: menu[:car_wash_menu_id])&.name
+                      = "(¥#{CarWashMenu.find_by(id: menu[:car_wash_menu_id])&.price.to_s(:delimited)})"
+                  tr
+                    th.align-bottom[scope="row"]
+                      |オプション
+                    td
+                      - CarWashOption.where(id: menu[:car_wash_option_ids]&.values&.map {|option| option.values }&.flatten).each do |option|
+                        = "#{option.name}"
+                        = "(¥#{option.price.to_s(:delimited)})"
+                        br
+      table.table
+        thead
+          tr
+            .col-5.fst-italic.fw-bold.text-dark style="text-shadow: 1px 1px 2px orange"
+              |作業場所
+        - if session[:same_location] == "true"
+          tbody
+            tr
+              th.col-3.align-bottom[scope="row"]
+                | お客様住所と同じ
+              td
+        - else
+          tbody
+            tr
+              th.col-4.align-bottom[scope="row"]
+                | 郵便番号
+              td
+                = session[:postal_code]
+            tr
+              th.align-bottom[scope="row"]
+                | 都道府県
+              td
+                = session[:prefecture]
+            tr
+              th.align-bottom[scope="row"]
+                | 住所
+              td
+                = "#{session[:w_address_1]}"
+                = "#{session[:w_address_2]}"
+            tr
+              th.align-bottom[scope="row"]
+                | 建物
+              td
+                = session[:w_building]
+
+
+      table.table
+        thead
+          tr
+            .col-5.fst-italic.fw-bold.text-dark style="text-shadow: 1px 1px 2px orange"
+              |お客様情報
+        tbody
+          tr
+            th.col-4.align-bottom[scope="row"]
+              | 姓名
+            td
+              = "#{session[:family_name]} #{session[:name]}"
+          tr
+            th.col-4.align-bottom[scope="row"]
+              | フリガナ
+            td
+              = "#{session[:family_name_kana]} #{session[:name_kana]}"
+          tr
+            th.align-bottom[scope="row"]
+              | 電話番号
+            td
+              = session[:phone]
+          tr
+            th.align-bottom[scope="row"]
+              | Eメール
+            td
+              = session[:email]
+          tr
+            th.align-bottom[scope="row"]
+              | 郵便番号
+            td
+              = session[:postal_code]
+          tr
+            th.align-bottom[scope="row"]
+              | 都道府県
+            td
+              = session[:prefecture]
+          tr
+            th.align-bottom[scope="row"]
+              | 住所
+            td
+              = "#{session[:address_1]}"
+              = "#{session[:address_2]}"
+          tr
+            th.align-bottom[scope="row"]
+              | 建物
+            td
+              = session[:building]
+          tr
+            th.align-bottom[scope="row"]
+              | 認知経路
+            td
+              = Customer.aware_routes_i18n[session[:aware_route]]
+          tr
+            th.align-bottom[scope="row"]
+              | 連絡事項
+            td
+              = session[:memo]
+
+    .container.justify-content-center.col-12.col-md-10
+      .card.rounded
+        .card-header.border-0.py-0
+          .card-title.d-inline-flex.flex-row.align-items-center.mt-2
+            i.bi.bi-hand-index.fs-6.text-success.me-1
+            span.text-dark.fst-italic.fw-bold 予約確定までのステップ
+        .card-body.pb-1
+          label.fst-italic.fw-bold.text-dark
+            |1. お申し込み
+          .row
+            .col-12.mt-2
+              p.m-0
+                |予約ページにて、「お申し込みを行う」ボタンを押すと、入力したメールアドレス宛に申込完了メールが送信されお申し込みとなります。
+              span.text-danger.ms-2 ※まだ予約は確定しておりません。
+        .text-center.mt-1
+          i.bi.bi-arrow-down-circle.h2.text-success
+        .card-body.pt-1
+          label.fst-italic.fw-bold.text-dark
+            |2. 予約完了
+          .row
+            .col-12.mt-2
+              p
+                |担当者が予約内容を確認のうえ、メールにて予約完了のご連絡をさせていただきます。
+              span.text-danger.ms-2 ※ご予約をお受けできないこともございます。予めご了承ください。
+        .card-body
+          i.bi.bi-exclamation-triangle-fill.fs-6.text-danger.me-1
+          label.fw-bold.text-dark
+            |【注意事項】
+          .row
+            .col-12.mt-2
+              p
+                | 予約完了後にキャンセルされる場合は、メール内に記載されているお問い合わせ先までご連絡ください。連絡なくキャンセルされるとサービスのご利用を制限させていただくことがあります。
+                br
+                | お申し込み時にご登録いただいた連絡先が無効な場合、ご予約をキャンセルさせていただくことがあります。
+    .container.justify-content-center.col-12.col-md-10.border-top.my-5.border-2
+      .text-center.fw-bold.mt-2
+        | 利用規約
+      .col-12.border.rounded
+        textarea.col-12.input-lg.area-box-size.p-4.border-0 readonly="true" style="resize: none;"
+          | Looking started he up perhaps against.
+          | Looking started he up perhaps against.
+          | Looking started he up perhaps against.
+          | Looking started he up perhaps against.
+          | Looking started he up perhaps against.
+          | Looking started he up perhaps against.
+          | Looking started he up perhaps against.
+          | Looking started he up perhaps against.
+          | Looking started he up perhaps against.
+          | Looking started he up perhaps against.
+          | Looking started he up perhaps against.
+          | Looking started he up perhaps against.
+          | Looking started he up perhaps against.
+      .container.mt-4
+        .form-check
+          input#consentCheck.form-check-input.js-consent[type="checkbox" value=""]
+          label.form-check-label[for="consentCheck"]
+            |  利用規約に同意する
+  .row.justify-content-center.mt-3
+    = link_to forms_apply_reservation_path, {class: "btn btn-primary disabled disabled_button w-50", data: { 'turbo-method': :post } } do
+      | お申し込みを行う
+
+  .row.justify-content-center.mt-3.d-none.d-sm-inline.d-md-inline.d-lg-inline.d-xl-inline.d-xxl-inline
+    = link_to prev_step_path(@current_step), {class: "btn btn-primary shadow rounded-circle text-center d-inline", style: "position: fixed;z-index: 99999;top: 55%;left: 5%;width: 4rem;height:4rem"}, data: { turbo: false } do
+      i.bi.bi-arrow-return-left.text-white style="font-size: 2.2rem"
+  .row.justify-content-center.mt-3.d-inline.d-sm-none.d-md-none.d-lg-none.d-xl-none.d-xxl-none
+    = link_to prev_step_path(@current_step), {class: "btn btn-primary shadow rounded-circle text-center d-inline", style: "position: fixed;z-index: 99999;top: 55%;left: 2%;width: 3rem;height:3rem"}, data: { turbo: false } do
+      i.bi.bi-arrow-return-left.text-white style="font-size: 1.5rem"
+= javascript_include_tag "confirm", "data-turbo-track": "reload", defer: true

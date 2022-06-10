@@ -1,0 +1,23 @@
+#accordionFlushExample.accordion.accordion-flush.shadow.p-1.mb-2.bg-body.rounded.col-sm-6
+  .accordion-item
+    h2#flush-headingOne.accordion-header
+      button.accordion-button.collapsed aria-controls="flush-collapseOne" aria-expanded="false" data-bs-target="#flush-collapseOne" data-bs-toggle="collapse" type="button"
+        | 検索
+    #flush-collapseOne.accordion-collapse.collapse aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample"
+      .accordion-body
+        = form_with url: travel_fees_path, data: { turbo: false }, local: false, method: :get do |f|
+          .row.mb-3
+            label.col-sm-4.col-form-label.fst-italic 住所
+            .col-sm-8
+              = f.text_field :address, value: params[:address], class: "form-control", placeholder: "福岡県, 中央区, Sinkawascheビル"
+          .row.mb-3
+            label.col-12.col-mb-2.col-form-label.fst-italic 価格
+            .col-5.col-mb-auto
+              = f.text_field :start_price, value: params[:start_price], type: :number, class: "form-control form-control-sm", placeholder: "金額"
+            .col-auto.fs-5.px-1.text-black-50 〜
+            .col-5.col-mb-auto
+              = f.text_field :end_price, value: params[:end_price], type: :number, class: "form-control form-control-sm", placeholder: "金額"
+          .col-12.d-flex.justify-content-end
+            button.btn.btn-outline-primary.mx-1.shadow.rounded-pill.px-4
+              |検索
+              i.bi.bi-search

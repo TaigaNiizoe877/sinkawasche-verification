@@ -1,0 +1,33 @@
+= render partial: "progress", locals: { value: 40, text: "時間選択" }
+
+.container.justify-content-center.col-12.col-md-10.col-xl-6
+  .card.shadow.rounded.pb-2
+    /.card-header.bg-white.border-bottom.border-info
+                
+    .card-body.bg-light.m-2.d-flex.justify-content-center
+      .col-11.col-md-5
+        .row
+          .col
+            | 日付
+            h3 = session[:day].to_date.strftime("%Y年%m月%d日")
+        .row
+          .col
+            | 所要時間
+            h3 = (session[:required_time].to_f / 60).round(1).to_s + "時間"
+
+    .card-body.p-0
+      .container.p-0.m-0.text-center.col-12.col-md-10.col-xl-10.mx-auto
+        - session[:time_schedule].each do |time, staff_ids|
+          - if staff_ids&.count.to_i != 0
+            = link_to forms_input_info_path(time: time, staff_ids: staff_ids), data: { turbo: false }, class: "text-decoration-none text-primary btn btn-outline-warning col-5 m-1 p-0 py-3 shadow rounded" do
+              h4.m-0.text-dark
+                | #{time.strftime("%H:%M")} 〜
+              p.m-0 style="color: red;" 
+                = "残り#{staff_ids&.count.to_i}枠"
+
+  .row.justify-content-center.mt-3.d-none.d-sm-inline.d-md-inline.d-lg-inline.d-xl-inline.d-xxl-inline
+    = link_to prev_step_path(@current_step), {class: "btn btn-primary shadow rounded-circle text-center d-inline", style: "position: fixed;z-index: 99999;top: 55%;left: 5%;width: 4rem;height:4rem"}, data: { turbo: false } do
+      i.bi.bi-arrow-return-left.text-white style="font-size: 2.2rem"
+  .row.justify-content-center.mt-3.d-inline.d-sm-none.d-md-none.d-lg-none.d-xl-none.d-xxl-none
+    = link_to prev_step_path(@current_step), {class: "btn btn-primary shadow rounded-circle text-center d-inline", style: "position: fixed;z-index: 99999;top: 55%;left: 2%;width: 3rem;height:3rem"}, data: { turbo: false } do
+      i.bi.bi-arrow-return-left.text-white style="font-size: 1.5rem"

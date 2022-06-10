@@ -1,0 +1,56 @@
+script[src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"]
+.card.col-sm-12.shadow.p-3.mb-4.bg-body.rounded
+  .row.g-1.col-sm-12.col-md-12.col-lg-6
+    .col.col-sm-6.pb-3
+      label.pb-2 #{Staff.human_attribute_name(:family_name)}
+      = f.text_field :family_name, class: "form-control"
+    .col.col-sm-6.pb-3
+      label.pb-2 #{Staff.human_attribute_name(:name)}
+      = f.text_field :name, class: "form-control"
+  .col-sm-6.pb-3
+    label.pb-2 #{Staff.human_attribute_name(:email)}
+    = f.email_field :email, autocomplete: "email", class: "form-control"
+  - if f.object.new_record?
+    .col-sm-6.pb-3
+      label.pb-2 #{Staff.human_attribute_name(:password)}
+      = f.password_field :password, autocomplete: "new-password", class: "form-control"
+    .col-sm-6.pb-3
+      label.pb-2 #{Staff.human_attribute_name(:password_confirmation)}
+      = f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control"
+  .col-sm-6.pb-3
+    label.pb-2 #{Staff.human_attribute_name(:role)}
+    = f.select :role, options_for_select(Staff.roles.keys.map { |k| [I18n.t("enums.staff.role.#{k}"), k] }, f.object.role), {}, {class: 'form-select'}
+  .col-sm-6.pb-3
+    label.pb-2 移動時間バッファ (単位:分)
+    = f.text_field :buffer_time, class: 'form-control', type: "number"
+
+  - unless f.object.new_record?
+    .col-sm-6.pb-3
+      label.pb-2 #{Staff.human_attribute_name(:phone)}
+      span.text-danger.ms-2 ※「-」無しで記入してください
+      = f.text_field :phone, class: "form-control", pattern: "^[0-9]+$"
+    .col-sm-6.pb-3
+      label.pb-2 #{Staff.human_attribute_name(:gender)}
+      = f.select :gender, options_for_select(Staff.genders.keys.map { |k| [I18n.t("enums.staff.gender.#{k}"), k] }, f.object.gender), {}, {class: 'form-select'}
+    .col-sm-6.pb-3
+      label.pb-2 #{Staff.human_attribute_name(:birthday)}
+      = f.date_field :birthday, class: "form-control", maxlength: "10", size: "10", step: "1"
+    .col-sm-6.pb-3
+      label.pb-2 #{Staff.human_attribute_name(:postal_code)}
+      span.text-danger.ms-2 ※「-」無しで記入してください
+      = f.text_field :postal_code, class: "form-control", pattern: "^[0-9]+$", onkeyup: "AjaxZip3.zip2addr(this,'','staff[prefecture]','staff[address]');", placeholder: "例:8100000"
+    .col-sm-6.pb-3
+      label.pb-2 #{Staff.human_attribute_name(:prefecture)}
+      = f.text_field :prefecture, class: "form-control"
+    .col-sm-6.pb-3
+      label.pb-2 #{Staff.human_attribute_name(:address)}
+      = f.text_field :address, class: "form-control"
+    .col-sm-6.pb-3
+      label.pb-2 #{Staff.human_attribute_name(:hobby)}
+      = f.text_field :hobby, class: "form-control"
+    .col-sm-8.pb-3
+      label.pb-2 #{Staff.human_attribute_name(:memo)}
+      = f.text_area :memo, size: "30x10", class: "form-control"
+
+center.pb-4
+  = render partial: "components/submit_btn", locals: { f: f }

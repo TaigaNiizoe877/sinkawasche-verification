@@ -1,0 +1,75 @@
+main
+  .col-12.col-md-11.m-auto
+    .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.mt-5.mb-2.border-bottom.border-4
+      .ps-2.fs-3 シフト管理
+    = render partial: "components/flash_messages"
+    
+    - staffs = @staffs
+    .col-12.d-flex.justify-content-center.mb-2.d-sm-inline.d-md-inline.d-lg-none.d-xl-none.d-xxl-none
+      .card.col-12.shadow.rounded.mb-md-2
+        a.card-header[data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" style="display: block; text-decoration: none"]
+          i.bi.bi-arrows-collapse.fs-6.me-1.text-dark
+          span.mx-2.text-dark スタッフ
+        .card-body#collapseExample.collapse
+          .row.d-flex.justify-content-center
+            .col-11
+              - staffs.map do |staff|
+                = link_to staff_calendar_staff_shifts_path(start_date: params[:start_date], staff_id: staff.id), style: "text-decoration: none; display: block;" do
+                  button.btn.btn-outline-primary.mb-2.rounded.p-1.col-12.btn-sm
+                    = staff.full_name
+
+    .col-12.d-flex.justify-content-center.mb-4.p-0
+      .card.col-2.shadow.rounded.mx-2.d-none.d-sm-none.d-md-none.d-lg-inline.d-xl-inline.d-xxl-inline
+        .card-header
+          | スタッフ
+        .card-body
+          .row.d-flex.justify-content-center
+            .col-11
+              - staffs.map do |staff|
+                = link_to staff_calendar_staff_shifts_path(start_date: params[:start_date], staff_id: staff.id), style: "text-decoration: none; display: block;" do
+                  button.btn.btn-outline-primary.mb-2.rounded.p-1.col-12.btn-sm
+                    = staff.full_name
+      .card.col-12.col-lg-10.shadow.rounded.py-4
+        .row.d-flex.justify-content-center
+          .col-11
+            = link_to staff_shifts_path(start_date: Date.today.to_s) do
+              button.btn.btn-outline-primary.btn-sm.mx-1.rounded-pill.px-4
+                |今月
+            = month_calendar do |date|
+              .inner.pb-2.align-top
+                .text-black-50
+                  = date.day
+                .d-none.d-sm-none.d-md-none.d-lg-inline.d-xl-inline.d-xxl-inline
+                  .form-group.m-0
+                    / PC表示
+                    - staff_shifts = @staff_shifts.where(start_at: date.to_date.all_day)
+                    - if staff_shifts.size == 0
+                      .col.mb-2.mt-2.text-black-50.small
+                        |未登録
+                    - elsif staff_shifts.size > 2
+                      button.btn.btn-outline-primary.col-11.m-0.p-0.px-1.h-1.my-2.mb-3 data-bs-toggle="modal" data-bs-target="#exampleModal" data-date="#{date}" data-day="#{date.day}" data-wday="#{t('date.abbr_day_names')[date.to_date.wday]}" data-wdayNum="#{date.to_date.wday}"
+                        i.bi.bi-search
+                        |詳細(#{staff_shifts.size}件)
+                    - else
+                      - staff_shifts.each do |shift|
+                        = link_to bulk_input_staff_shifts_path(start_date: params[:start_date], staff_id: shift.staff.id), style: "text-decoration: none; display: block;" do
+                          button.btn.btn-outline-primary.col-11.m-0.p-0.h-1.mx-1
+                            p.small.small.m-0
+                              = shift.staff.full_name
+                              br
+                              = shift.start_at.strftime("%H:%M") + "~" + shift.end_at.strftime("%H:%M")
+                .d-inline.d-sm-inline.d-md-inline.d-lg-none.d-xl-none.d-xxl-none
+                  .form-group.m-0
+                    / スマホ表示
+                    button.btn.btn-outline-primary.m-0.p-0.px-1.h-1.my-2 data-bs-toggle="modal" data-bs-target="#exampleModal" data-date="#{date}" data-day="#{date.day}" data-wday="#{t('date.abbr_day_names')[date.to_date.wday]}" data-wdayNum="#{date.to_date.wday}"
+                      i.bi.bi-search
+
+#exampleModal.modal.fade[tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"]
+  .modal-dialog
+    .modal-content
+      .modal-body.mb-3
+        button.btn-close[type="button" data-bs-dismiss="modal" aria-label="Close"]
+        .col-9.m-auto
+          .simple-calendar.target
+
+= javascript_include_tag "staff_shift_modal", "data-turbo-track": "reload", defer: true

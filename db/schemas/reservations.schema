@@ -1,0 +1,21 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+create_table 'reservations', options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC', force: :cascade do |t|
+    t.bigint :customer_id
+    t.bigint :staff_id
+    t.bigint :working_location_id
+    t.datetime :start_at
+    t.datetime :end_at
+    t.string :status, default: 'applying'
+    t.bigint :travel_fee
+    t.boolean :auto_culc_flag, default: true
+    t.integer :total_price
+    t.text :memo
+    t.boolean :sent_email, null: false, default: false
+
+    t.datetime :discarded_at
+    t.datetime :created_at
+    t.datetime :updated_at
+end
+
+add_index :reservations, :discarded_at

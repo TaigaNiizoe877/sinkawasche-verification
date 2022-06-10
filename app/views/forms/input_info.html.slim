@@ -1,0 +1,167 @@
+script[src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"]
+= javascript_include_tag "input_info", "data-turbo-track": "reload", defer: true
+= render partial: "progress", locals: { value: 60, text: "お客様情報入力" }
+
+.container.justify-content-center.col-11.col-md-10.col-xl-6
+  = form_with namespace: "reservation", url: next_step_path(@current_step), method: :get do |form|
+    .card.shadow.rounded
+      .card-header.bg-white.border-bottom.border-info
+        .card-title.d-inline-flex.flex-row.align-items-center.mt-2
+          i.bi.bi-check2-square.fs-6.text-success.me-1
+          span.text-dark.fst-italic.fs-5 style="text-shadow: 1px 1px 2px orange" 選択日時
+      .card-body
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | 日付
+          .form-group.col-md-8
+            = form.text_field :day, class: "form-control", value: session[:start_at].to_date.to_s, disabled: true
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | 時間
+          .form-group.col-md-8
+            = form.text_field :time, class: "form-control", value: session[:start_at].strftime("%H:%M"), disabled: true
+      .card-header.bg-white.border-bottom.border-info
+        .card-title.d-inline-flex.flex-row.align-items-center.mt-2
+          i.bi.bi-check2-square.fs-6.text-success.me-1
+          span.text-dark.fst-italic.fs-5 style="text-shadow: 1px 1px 2px orange" 作業場所情報
+      .card-body
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | 郵便番号
+          .mb-1
+            = link_to "#{current_customer.present? ? "/forms/select_working_location" : "/forms/select_menu"}" do
+              |作業場所を変更する
+          .row.row-cols-1.row-cols-sm-2.row-cols-md-4
+            .form-group.col-md-8
+              = form.text_field :w_postal_code, class: "form-control", value: session[:w_postal_code], readonly: true
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | 都道府県
+          .row.row-cols-1.row-cols-sm-2.row-cols-md-4
+            .form-group.col-md-8
+              = form.text_field :w_prefecture, class: "form-control", value: session[:w_prefecture], readonly: true
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | 住所
+          .form-group.col-md-8
+            = form.text_field :w_address_1, class: "form-control", value: session[:w_address_1], readonly: true
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | 番地以下
+          br
+          span.text-danger.ms-2.small ※必須
+          .form-group.col-md-8
+            = form.text_field :w_address_2, class: "form-control", value: session[:w_address_2]
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | 建物
+          .form-group.col-md-8
+            = form.text_field :w_building, class: "form-control", value: session[:w_building]
+        .mb-1
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | ご連絡事項
+          .form-group.col-md-8
+            = form.text_area :memo, class: "form-control", value: session[:memo]
+      .card-header.bg-white.border-bottom.border-info
+        .card-title.d-inline-flex.flex-row.align-items-center.mt-2
+          i.bi.bi-check2-square.fs-6.text-success.me-1
+          span.text-dark.fst-italic.fs-5 style="text-shadow: 1px 1px 2px orange" お客様情報
+      .card-body
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | 名前
+          span.text-danger.ms-2 ※必須
+          .row.row-cols-1.row-cols-sm-2.row-cols-md-4
+            .col-5.me-1.mx-2
+              = form.text_field :family_name, class: "form-control", placeholder: "田中", value: session[:family_name], required: "true"
+            .col-5.me-1
+              = form.text_field :name, class: "form-control", placeholder: "太郎", value: session[:name], required: "true"
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | フリガナ
+          span.text-danger.ms-2 ※必須
+          .row.row-cols-1.row-cols-sm-2.row-cols-md-4
+            .col-5.me-1.mx-2
+              = form.text_field :family_name_kana, class: "form-control", placeholder: "タナカ", value: session[:family_name_kana], required: "true"
+            .col-5.me-1
+              = form.text_field :name_kana, class: "form-control", placeholder: "タロウ", value: session[:name_kana], required: "true"
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | 電話番号
+          span.text-danger.ms-2 ※必須
+          .form-group.col-md-8
+            = form.text_field :phone, class: "form-control", placeholder: "09011111111", value: session[:phone], required: "true"
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | Eメール
+          span.text-danger.ms-2 ※必須
+          .form-group.col-md-8
+            = form.email_field :email, class: "form-control", placeholder: "example@gmail.com", value: session[:email], required: "true"
+        / .mb-4
+        /   label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+        /     | LINE ID
+        /   .form-group.col-md-8
+        /     = form.email_field :email, class: "form-control", placeholder: "example@gmail.com", value: session[:email]
+        - if current_customer.blank?
+          .mb-4
+            label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+              | パスワード
+            span.text-danger.ms-2 ※必須
+            .form-group.col-md-8
+              = form.password_field :password, class: "form-control", pattern: "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,70}", title: "パスワードの強度が不足しています。パスワードの長さは8〜70文字とし、大文字と小文字と数字と特殊文字をそれぞれ1文字以上含める必要があります。"
+        .mb-4
+          .form-group.col-md-8
+            button.btn.btn-outline-secondary.button-primary.shadow#copyAddress type='button'
+              i.bi.bi-clipboard.fs-6.text-success.me-1
+              span.text-dark 作業場所の住所をコピー
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | 郵便番号
+          span.text-danger.ms-2 ※必須
+          .form-group.col-md-8
+            = form.text_field :postal_code, class: "form-control", value: session[:postal_code], onkeyup: "AjaxZip3.zip2addr( this, '', 'prefecture', 'address_1');", placeholder: "例:8100000", required: "true"
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | 都道府県
+          .row.row-cols-1.row-cols-sm-2.row-cols-md-4
+            .form-group.col-md-8
+              = form.text_field :prefecture, class: "form-control", value: session[:prefecture], readonly: true
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | 住所
+          .form-group.col-md-8
+            = form.text_field :address_1, class: "form-control", value: session[:address_1], readonly: true
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | 番地以下
+          span.text-danger.ms-2 ※必須
+          .form-group.col-md-8
+            = form.text_field :address_2, class: "form-control", value: session[:address_2], required: "true"
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | 建物
+          .form-group.col-md-8
+            = form.text_field :building, class: "form-control", value: session[:building]
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | 認知経路
+          .form-group.col-md-8
+            = form.collection_radio_buttons :aware_route, Customer.aware_routes_i18n, :first, :last, checked: (session[:aware_route].present? ? session[:aware_route] : Customer.aware_routes_i18n.first.first), class: "p-0" do |b|
+              = b.label(class: "form-check-label p-0") { b.radio_button(class: "form-check-input shadow-sm mx-1 mb-1") + b.text }
+        .mb-4
+          label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+            | お知らせ通知
+          .form-group.col-md-8
+            = form.check_box :notice, class: "form-check-input mx-1 mb-1 shadow-sm", checked: session[:notice].present? ? session[:notice].eql?("1") : true
+            label.form-check-label[for="notice"]
+              |  お知らせメールを受け取る
+    .row.justify-content-center.mt-3
+      button.btn.btn-primary.shadow.rounded.my-2.w-50 name="commit" type="submit"
+        | 進む
+
+  .row.justify-content-center.mt-3.d-none.d-sm-inline.d-md-inline.d-lg-inline.d-xl-inline.d-xxl-inline
+    = link_to prev_step_path(@current_step), {class: "btn btn-primary shadow rounded-circle text-center d-inline", style: "position: fixed;z-index: 99999;top: 55%;left: 5%;width: 4rem;height:4rem"}, data: { turbo: false } do
+      i.bi.bi-arrow-return-left.text-white style="font-size: 2.2rem"
+  .row.justify-content-center.mt-3.d-inline.d-sm-none.d-md-none.d-lg-none.d-xl-none.d-xxl-none
+    = link_to prev_step_path(@current_step), {class: "btn btn-primary shadow rounded-circle text-center d-inline", style: "position: fixed;z-index: 99999;top: 55%;left: 2%;width: 3rem;height:3rem"}, data: { turbo: false } do
+      i.bi.bi-arrow-return-left.text-white style="font-size: 1.5rem"

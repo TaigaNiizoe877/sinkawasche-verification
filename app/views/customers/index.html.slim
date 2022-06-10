@@ -1,0 +1,45 @@
+main
+  .col-12.col-md-11.m-auto
+    .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.mt-5.mb-2.border-bottom.border-4
+      .ps-2.fs-3 お客様情報一覧
+      = render partial: "components/new_btn", locals: { label_name: "お客様", path: new_customer_path }
+    = render partial: "components/flash_messages"
+
+    = render partial: "search"
+    .card.col-sm-12.shadow.p-3.mb-5.bg-body.rounded.small
+      table.table.table-striped.table-sm.mb-3
+        thead
+          tr
+            th.col-sm-1.px-2 = "氏名"
+            th.col-sm-1 = "電話"
+            th.col-sm-3.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell = "住所"
+            th.col-sm-2.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell = "Eメール"
+            th.col-sm-2.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell = "認識ルート"
+            th.col-sm-1.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell = "お知らせ"
+
+        tbody
+          - @customers.each do |customer|
+            tr
+              td.td_vertical_align_middle.px-2 = customer.full_name
+              td.td_vertical_align_middle = customer.phone
+              td.td_vertical_align_middle.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell = customer.full_address.truncate(20)
+              td.td_vertical_align_middle.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell = customer.email
+              td.td_vertical_align_middle.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell = customer.aware_route.present? ? Customer.aware_routes_i18n[customer.aware_route] : "-"
+              td.td_vertical_align_middle.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell = customer.notice.present? ? "有" : "無"
+              td.td_vertical_align_middle
+                .btn-group.dropstart.d-flex.flex-row-reverse.px-1
+                  span.bi.bi-three-dots aria-expanded="false" data-bs-toggle="dropdown" type="button"  style="color: #black; font-size: 20px"
+                  ul.dropdown-menu
+                    li
+                      = link_to "閲覧", "#{customer_path(customer.id)}", { method: :get, class: "dropdown-item" }
+                    li
+                      = link_to "予約確認", "#{reservations_path(customer_id: customer.id)}", { method: :get, class: "dropdown-item" }
+                    li
+                      = link_to "予約作成", "#{new_reservation_path(customer_id: customer.id)}", { method: :get, class: "dropdown-item" }
+                    li
+                      = link_to "編集する", "#{edit_customer_path(customer.id)}", { method: :get, class: "dropdown-item", data: { turbo: false } }
+                    - unless customer&.reservations.present?
+                      li
+                        = button_to "削除", "#{customer_path(customer.id)}", { method: :delete, form: { data: { turbo_confirm: "本当に削除しますか？" }}, class: "dropdown-item" }
+
+    = paginate @customers, theme: 'bootstrap-5'

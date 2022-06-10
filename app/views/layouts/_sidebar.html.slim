@@ -1,0 +1,29 @@
+.fixed-top.col-xl-2.bg-warning.vh-100 style="padding-top: 5%; z-index: 10;"
+  ul.nav.flex-column.mx-4
+    .sidebar-heading.d-flex.justify-content-between.align-items-center.px-2.mt-2.mb-1
+      span.fs-5.fw-bold.text-dark 管理
+    hr
+    li.nav-item
+      = render partial: "components/sidebar_link", locals: { label_name: "お客様情報管理", path: "/customers", class_name: "nav-link bi bi-file-person-fill fs-6" }
+
+    li.nav-item
+      = render partial: "components/sidebar_link", locals: { label_name: "スタッフ管理", path: "/staffs", class_name: "nav-link bi bi-person-lines-fill fs-6" }
+
+    - if current_staff.staff?
+      li.nav-item
+        = render partial: "components/sidebar_link", locals: { label_name: "シフト管理", path: staff_calendar_staff_shifts_path(staff_id: current_staff.id), class_name: "nav-link bi bi-layers fs-6" }
+    - else
+      li.nav-item
+        = render partial: "components/sidebar_link", locals: { label_name: "シフト管理", path: staff_shifts_path(start_date: Date.today.to_s), class_name: "nav-link bi bi-layers fs-6" }
+
+  ul.nav.flex-column.mb-2.mx-4
+    li.nav-item
+      = render partial: "components/sidebar_link", locals: { label_name: "予約管理", path: "/reservations", class_name: "nav-link bi bi-pencil-square fs-6" }
+
+    - if current_staff.admin?
+      .sidebar-heading.d-flex.justify-content-between.align-items-center.px-2.mt-4.mb-1
+        span.fs-5.fw-bold マスター管理
+      hr
+
+      li.nav-item
+        = render partial: "components/sidebar_link", locals: { label_name: "出張料金マスタ", path: "/travel_fees", class_name: "nav-link bi bi-currency-dollar fs-6" }

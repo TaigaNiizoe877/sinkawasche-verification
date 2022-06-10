@@ -1,0 +1,18 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+create_table 'working_locations', options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC', force: :cascade do |t|
+    t.bigint :customer_id
+    t.string :postal_code
+    t.string :prefecture
+    t.string :address_first
+    t.string :address_second
+    t.string :building
+    t.string :latitude
+    t.string :longitude
+
+    t.datetime :discarded_at
+    t.datetime :created_at
+    t.datetime :updated_at
+end
+
+add_index :working_locations, :discarded_at

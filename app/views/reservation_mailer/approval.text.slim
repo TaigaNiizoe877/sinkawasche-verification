@@ -1,0 +1,46 @@
+| ※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
+| こちらは送信専用のメールアドレスになります。
+| 直接メールでご返信されても、確認いたしかねますのでご注意ください。
+| ※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
+
+
+| こんにちは。
+| 自動車洗車サービス『sinkawache』です。
+
+
+|  #{@customer.full_name}様
+
+| この度は、sinkawacheにご利用いただき誠にありがとうございます。
+
+|  #{@customer.full_name}様の、またのご利用を心よりお待ちしております。
+
+|  予約日　：#{@reservation.start_end_at_to_string}
+|  氏名　　：#{@customer.full_name} 様
+|  作業場所：#{@reservation.working_location.full_address}
+|  電話番号：#{@customer.phone}
+|  合計金額：¥#{@reservation.total_price.to_s(:delimited)}
+
+| 小計
+- @reservation.reservation_infos.each.with_index(1) do |info, i|
+  | <#{i}台目>
+  | #{info.car_wash_menu.name}: ¥#{info.car_wash_menu.price.to_s(:delimited)}
+  - info.car_wash_options.each do |op|
+    | #{op.name}: ¥#{op.price.to_s(:delimited)}
+- if @reservation.travel_fee.to_i > 0
+  | <その他>
+  | 出張料金: ¥#{@reservation.travel_fee.to_s(:delimited)}
+- elsif @reservation.travel_fee.nil?
+  | <その他>
+  | 出張料金: 未確定(予約確定前にスタッフより連絡させていただきます。)
+
+
+
+
+| * ご質問、ご不明点等ございましたら、下記よりご連絡いただきますよう、よろしくお願いいたします。
+| ----------------------------------------
+| sinkawache
+| メールアドレス : example@gmail.com
+| 電話番号 : 090-1234-1234
+| 変更依頼はこちら
+| #{forms_request_change_top_url(reservation_id: @reservation.id)} |
+| ----------------------------------------

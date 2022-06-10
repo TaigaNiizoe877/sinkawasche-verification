@@ -1,0 +1,36 @@
+main
+  .col-12.col-md-11.m-auto
+    .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.mt-5.mb-2.border-bottom.border-4
+      .ps-2.fs-3 出張料金 一覧
+      .btn-toolbar.mb-2.mb-md-0
+        = render partial: "components/new_btn", locals: { label_name: "出張料金 ", path: new_travel_fee_path(@travel_fee) }
+
+    = render partial: "components/flash_messages"
+
+    = render partial: "search"
+
+    .card.col-sm-12.shadow-sm.p-3.mb-5.bg-body.rounded
+      table.table.table-striped.table-sm.mb-3
+        thead
+          tr
+            th.col-sm-4.px-2 = TravelFee.human_attribute_name(:prefecture)
+            th.col-sm-4 = TravelFee.human_attribute_name(:address)
+            th.col-sm-3.5 = TravelFee.human_attribute_name(:price)
+            th.col-sm-0.5
+
+        tbody
+          - @travel_fees.each do |fee|
+            tr
+              td.td_vertical_align_middle.px-2 = fee.prefecture
+              td.td_vertical_align_middle = fee.address
+              td.td_vertical_align_middle ¥#{fee&.price&.to_s(:delimited)}
+              td.td_vertical_align_middle
+                .btn-group.dropstart.d-flex.flex-row-reverse.px-1
+                  span.bi.bi-three-dots aria-expanded="false" data-bs-toggle="dropdown" type="button"  style="color: #black; font-size: 20px"
+                  ul.dropdown-menu
+                    li
+                      = link_to "編集する", "#{edit_travel_fee_path(fee.id)}", { method: :get, class: "dropdown-item", data: { turbo: false } }
+                    li
+                      = button_to "削除", "#{travel_fee_path(fee.id)}", { method: :delete, form: { data: { turbo_confirm: "本当に削除しますか？" }}, class: "dropdown-item" }
+
+    = paginate @travel_fees, theme: 'bootstrap-5'

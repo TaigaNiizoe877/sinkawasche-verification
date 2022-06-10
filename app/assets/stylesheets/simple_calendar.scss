@@ -1,0 +1,115 @@
+.simple-calendar {
+  span {
+    color: rgb(0, 136, 255);
+  }
+
+  table {
+    color: rgb(0, 136, 255);
+    -webkit-border-horizontal-spacing: 0px;
+    -webkit-border-vertical-spacing: 0px;
+    background-color: rgba(0, 0, 0, 0);
+    border: 1px solid rgb(221, 221, 221);
+    border-collapse: collapse;
+    box-sizing: border-box;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  tr {
+    border-collapse: collapse;
+  }
+
+  th {
+    padding: 8px;
+    border-bottom: 2px solid rgb(221, 221, 221);
+    border-collapse: collapse;
+    border-top: 0px none rgb(51, 51, 51);
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  td {
+    height: 12%;
+    text-align: center;
+    padding: 0px;
+    vertical-align: top;
+    width: 12%;
+
+    border: 1px solid #ddd;
+    border-top-color: rgb(221, 221, 221);
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-right-color: rgb(221, 221, 221);
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-bottom-color: rgb(221, 221, 221);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-left-color: rgb(221, 221, 221);
+    border-left-style: solid;
+    border-left-width: 1px;
+  }
+
+  .day {}
+
+  .wday-0 {}
+
+  .wday-1 {}
+
+  .wday-2 {}
+
+  .wday-3 {}
+
+  .wday-4 {}
+
+  .wday-5 {}
+
+  .wday-6 {}
+
+  .inner::before {
+    content: "";
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 15px;
+    height: 15px;
+    display: block;
+    pointer-events: none;
+  }
+
+  .today {
+    .inner::before {
+      content: "";
+      position: relative;
+      top: 0;
+      left: 0;
+      height: 0;
+      width: 0;
+      display: block;
+      border-right: 15px solid transparent;
+      border-top: 15px solid #f2cb05;
+      pointer-events: none;
+    }
+  }
+
+  .past {
+    opacity: 0.23;
+    background-color:#d3d2d2;
+  }
+
+  .future {}
+
+  .start-date {}
+
+  .prev-month {
+    background: rgb(173, 231, 251);
+  }
+
+  .next-month {
+    background: rgb(173, 231, 251);
+  }
+
+  .current-month {}
+
+  .has-events {}
+}

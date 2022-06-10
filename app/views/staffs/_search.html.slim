@@ -1,0 +1,24 @@
+#accordionFlushExample.accordion.accordion-flush.shadow.p-1.mb-2.bg-body.rounded.col-sm-6
+  .accordion-item
+    h2#flush-headingOne.accordion-header
+      button.accordion-button.collapsed aria-controls="flush-collapseOne" aria-expanded="false" data-bs-target="#flush-collapseOne" data-bs-toggle="collapse" type="button"
+        | 検索
+    #flush-collapseOne.accordion-collapse.collapse aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample"
+      .accordion-body
+        = form_with url: staffs_path, data: { turbo: false }, local: false, method: :get do |f|
+          .row.mb-3
+            label.col-sm-4.col-form-label.fst-italic スタッフ名
+            .col-sm-8
+              = f.text_field :name, value: params[:name], class: "form-control", placeholder: "田中 太郎"
+          .row.mb-3
+            label.col-sm-4.col-form-label.fst-italic 住所
+            .col-sm-8
+              = f.text_field :address, value: params[:address], class: "form-control", placeholder: "福岡県, 中央区, Sinkawascheビル"
+          .row.mb-3
+            label.col-sm-4.col-form-label.fst-italic 役職
+            .col-sm-8
+              = f.select :role, options_for_select(Staff.roles.keys.map { |k| [I18n.t("enums.staff.role.#{k}"), k] }, params[:role]), {include_blank: '選択してください'}, {class: 'form-select'}
+          .col-12.d-flex.justify-content-end
+            button.btn.btn-outline-primary.mx-1.shadow.rounded-pill.px-4
+              |検索
+              i.bi.bi-search

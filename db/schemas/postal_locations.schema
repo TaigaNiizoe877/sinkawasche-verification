@@ -1,0 +1,11 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+create_table 'postal_locations', options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC', force: :cascade do |t|
+    t.string :postal_code
+    t.string :longitude
+    t.string :latitude
+
+    t.datetime :discarded_at
+    t.datetime :created_at
+    t.datetime :updated_at
+end

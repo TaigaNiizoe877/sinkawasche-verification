@@ -1,0 +1,39 @@
+#accordionFlushExample.accordion.accordion-flush.shadow.p-1.mb-2.bg-body.rounded.col-sm-6
+  .accordion-item
+    h2#flush-headingOne.accordion-header
+      button.accordion-button.collapsed aria-controls="flush-collapseOne" aria-expanded="false" data-bs-target="#flush-collapseOne" data-bs-toggle="collapse" type="button"
+        | 検索
+    #flush-collapseOne.accordion-collapse.collapse aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample"
+      .accordion-body
+        = form_with url: customers_path, data: { turbo: false }, local: false, method: :get do |f|
+          .row.mb-3
+            label.col-sm-2.col-form-label.fst-italic お名前
+            .col-sm-10
+              = f.text_field :name, value: params[:name], class: "form-control", placeholder: "田中 太郎"
+          .row.mb-3
+            label.col-sm-2.col-form-label.fst-italic 住所
+            .col-sm-10
+              = f.text_field :address, value: params[:address], class: "form-control", placeholder: "鹿児島県, 鹿児島市, Sinkawascheビル"
+          .row.mb-3
+            label.col-form-label.fst-italic 直近の予約日付
+            .col-5.col-mb-auto
+              = f.date_field :start_day, value: params[:start_day], class: "form-control"
+            .col-auto.fs-5.p-1.text-black-50 〜
+            .col-5.col-mb-auto
+              = f.date_field :end_day, value: params[:end_day], class: "form-control"
+          .row.mb-3
+            label.col-sm-2.col-form-label.fst-italic 認知経路
+            .col-sm-3
+              = f.select :aware_route, options_for_select(Customer.aware_routes.keys.map { |k| [I18n.t("enums.customer.aware_route.#{k}"), k] }, params[:aware_route].presence), {include_blank: ""}, {class: 'form-select'}
+          .row.mb-3.mx-1
+            label.col-form-label.fst-italic お知らせ
+            .col-sm-2.form-check
+              = f.check_box :public, value: "", style: "", class: "form-check-input", checked: params[:public].present? ? params[:public].eql?("1") : false
+              label.form-check-label.fst-italic for="flexRadioDefault1" 有
+            .col-sm-3.form-check
+              = f.check_box :private, value: "", style: "", class: "form-check-input", checked: params[:private].present? ? params[:private].eql?("1") : false
+              label.form-check-label.fst-italic for="flexRadioDefault2" 無
+          .col-12.d-flex.justify-content-end
+            button.btn.btn-outline-primary.mx-1.shadow.rounded-pill.px-4
+              |検索
+              i.bi.bi-search

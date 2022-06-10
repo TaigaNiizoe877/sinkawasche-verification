@@ -1,0 +1,40 @@
+- if staff_signed_in?
+  doctype html
+  html.h-100
+    head
+      title data-turbolinks="false"
+        | Sinkawasche
+      meta[name="viewport" content="width=device-width,initial-scale=1"]
+      = favicon_link_tag "/favicon-car.png"
+      = csrf_meta_tags
+      = csp_meta_tag
+      = stylesheet_link_tag "application"
+      = javascript_include_tag "application"
+      = javascript_include_tag "admin"
+
+    = render partial: "layouts/header"
+    .container-fluid.bg-light
+      .row
+        .col-xl-2.d-none.d-print-inline.d-sm-none.d-md-none.d-lg-none.d-xl-inline.d-xxl-inline.bg-warning.vh-100
+          = render partial: "layouts/sidebar"
+        .col-xl-10
+          = yield
+- else
+  doctype html
+  html
+    head
+      title
+        | Sinkawasche
+      meta[name="viewport" content="width=device-width,initial-scale=1"]
+      = csrf_meta_tags
+      = csp_meta_tag
+      = stylesheet_link_tag "application", "data-turbo-track": "reload"
+      = javascript_include_tag "customer_form", "data-turbo-track": "reload", defer: true
+
+      .navbar.navbar-dark.justify-content-center.sticky-top.bg-dark.flex-md-nowrap.p-0.shadow
+        span.d-flex.justify-content-center.fs-5.text-warning.fst-italic.col-md-3.col-lg-2.me-0.py-2.px-3 style="text-shadow: 1px 1px orange"
+          | Sinkawasche
+
+    body.bg-light
+      = render partial: "components/flash_messages"
+      = yield

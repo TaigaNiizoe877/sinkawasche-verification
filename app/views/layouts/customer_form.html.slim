@@ -1,0 +1,25 @@
+doctype html
+html
+  head
+    title
+      | Sinkawasche
+    meta[name="viewport" content="width=device-width,initial-scale=1"]
+    = favicon_link_tag "/favicon-car.png"
+    = csrf_meta_tags
+    = csp_meta_tag
+    = stylesheet_link_tag "application", "data-turbo-track": "reload"
+    = javascript_include_tag "customer_form", "data-turbo-track": "reload", defer: true
+
+  .row.navbar.navbar-dark.sticky-top.bg-dark.flex-md-nowrap.p-0.m-0.shadow
+    .col
+    .d-flex.col.justify-content-center
+      span.d-flex.justify-content-center.col-md-3.col-lg-2.me-0.py-2.px-3 
+        = button_to forms_top_path, { method: :get, form: { data: { turbo_confirm: "入力内容をリセットして初めからやり直しますか？" }}, style: "background: none;border: none;outline: none;-webkit-appearance: none;-moz-appearance: none;appearance: none;}" }
+          .fs-5.text-warning.fst-italic style="text-shadow: 1px 1px orange" Sinkawasche
+    .col.d-flex.justify-content-end.align-items-center style="padding-right: 0.2rem;padding-left: 1.3rem"
+      = link_to forms_help_path, { class: "text_center btn btn-outline-warning shadow rounded-pill m-0 mx-md-3 px-md-4", target: :_blank }, data: { turbo: false } do
+        span.text-center.small.m-0.p-0 ヘルプ
+
+  body.bg-light
+    = render partial: "components/flash_messages"
+    = yield

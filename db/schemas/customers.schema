@@ -1,0 +1,32 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+create_table 'customers', options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC', force: :cascade do |t|
+    t.string :family_name
+    t.string :name
+    t.string :family_name_kana
+    t.string :name_kana
+
+    t.string :email
+    t.string :password_digest
+    t.string :phone
+    t.string :postal_code
+    t.string :prefecture
+
+    t.string :address_first
+    t.string :address_second
+    t.string :building
+    t.text :memo
+    t.string :aware_route
+    t.string :latitude
+    t.string :longitude
+    t.boolean :notice
+
+    t.string :reset_token
+    t.datetime :reset_sent_at
+    t.string :reset_digest
+
+    t.datetime :discarded_at
+    t.datetime :created_at
+    t.datetime :updated_at
+end
+add_index :customers, :discarded_at

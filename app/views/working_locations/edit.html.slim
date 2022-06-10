@@ -1,0 +1,10 @@
+main
+  .col-12.col-md-11.m-auto
+    .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.mt-5.mb-2.border-bottom.border-4
+      .ps-4.d-flex.align-items-center
+        .fs-3 作業場所 編集
+        = link_to "お客様情報に戻る", "#{customer_path(@customer_id)}", { method: :index, class: "bi bi-chevron-left ps-4 pt-2" }
+
+    = form_with model: @working_location, url: working_location_path, data: { turbo: false } do |f|
+      = render partial: "components/error_messages", locals: { form: f.object }
+      = render partial: "form", locals: { f: f }

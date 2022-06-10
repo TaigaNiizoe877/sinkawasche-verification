@@ -1,0 +1,42 @@
+= render partial: "progress", locals: { value: 40, text: "予約日選択" }
+<script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
+
+.container.justify-content-center.col-11.col-md-10.col-xl-6.mb-4
+  .card.shadow.rounded.py-4
+    .row.d-flex.justify-content-center
+      .col-11
+        = link_to forms_select_day_path(start_at: Date.today.to_s) do
+          button.btn.btn-outline-success
+            | 今月
+        = month_calendar do |date|
+          - v_time = Reservation.vacancy(date)
+          - if date <= Time.current.to_date || date > (Time.current.to_date + 3.months)
+            .inner.pb-2
+              .text-black-50
+                = date.day
+                br
+                = '-'
+          - elsif date < Time.current.to_date.yesterday || v_time < 60
+            .inner.pb-2
+              .text-black-50
+                = date.day
+                br
+                = '×'
+          - else
+            .inner.pb-2
+              = link_to forms_select_time_path(day: date), class: "text-decoration-none d-block", onMouseOut: "this.style.opacity= 1;", onMouseOver: "this.style.opacity= 0.5;" do
+                .text-dark style="text-shadow: 1px 1px 2px orange"
+                  = date.day
+                  br
+                  - if v_time < StaffShift.where(start_at: date.all_day)&.map {|shift| (shift.end_at - shift.start_at)/60}.sum * 0.5
+                    = '△'
+                  - else
+                    = '○'
+
+  .row.justify-content-center.mt-3.d-none.d-sm-inline.d-md-inline.d-lg-inline.d-xl-inline.d-xxl-inline
+    = link_to prev_step_path(@current_step), {class: "btn btn-primary shadow rounded-circle text-center d-inline", style: "position: fixed;z-index: 99999;top: 55%;left: 5%;width: 4rem;height:4rem"}, data: { turbo: false } do
+      i.bi.bi-arrow-return-left.text-white style="font-size: 2.2rem"
+  .row.justify-content-center.mt-3.d-inline.d-sm-none.d-md-none.d-lg-none.d-xl-none.d-xxl-none
+    = link_to prev_step_path(@current_step), {class: "btn btn-primary shadow rounded-circle text-center d-inline", style: "position: fixed;z-index: 99999;top: 55%;left: 2%;width: 3rem;height:3rem"}, data: { turbo: false } do
+      i.bi.bi-arrow-return-left.text-white style="font-size: 1.5rem"
+        

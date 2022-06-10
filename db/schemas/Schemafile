@@ -1,0 +1,16 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+require "car_makers.schema"
+require "car_models.schema"
+require "car_sizes.schema"
+require "customers.schema"
+require "reservation_infos.schema"
+require "reservations.schema"
+require "staff_shifts.schema"
+require "working_locations.schema"
+require "staffs.schema"
+require "sessions.schema"
+require "travel_fees.schema"
+require "travel_time_histories.schema"
+require "postal_locations.schema"
+require "request_changes.schema"

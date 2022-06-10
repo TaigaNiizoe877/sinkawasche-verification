@@ -1,0 +1,22 @@
+script[src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"]
+.card.col-sm-12.shadow.p-3.mb-5.bg-body.rounded
+  .col-sm-6.pb-2
+    label.pb-2  郵便番号
+    span.text-danger.ms-2 ※「-」無しで記入してください
+    = f.text_field :postal_code, class: "form-control", pattern: "^[0-9]+$", onkeyup: "AjaxZip3.zip2addr(this,'','working_location[prefecture]','working_location[address_first]');", placeholder: "例:8100000"
+  .col-sm-6.pb-2
+    label.pb-2  都道府県
+    = f.text_field :prefecture, class: "form-control", readonly: true
+  .col-sm-6.pb-2
+    label.pb-2  市区町村
+    = f.text_field :address_first, class: "form-control", readonly: true
+  .col-sm-6.pb-2
+    label.pb-2  番地以下
+    = f.text_field :address_second, class: "form-control"
+  .col-sm-6.pb-2
+    label.pb-2  建物
+    = f.text_field :building, class: "form-control"
+    = f.hidden_field :customer_id, value: @customer_id
+
+center.pb-5
+  = render partial: "components/submit_btn", locals: { f: f }

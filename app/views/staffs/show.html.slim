@@ -1,0 +1,114 @@
+main
+  .col-12.col-md-11.m-auto
+    .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.mt-5.mb-2.border-bottom.border-4
+      .ps-2.d-flex.align-items-center
+        .fs-3 スタッフ詳細
+        = link_to "一覧に戻る", "#{staffs_path}", { method: :index, class: "bi bi-chevron-left ps-4 pt-2" }
+      .btn-toolbar.mb-2.mb-md-0.d-none.d-sm-flex
+        = render partial: "components/edit_btn", locals: { label_name: "編集する", path: edit_staff_path(@staff.id) }
+        - if @staff&.reservations.blank? && current_staff&.admin?
+          = render partial: "components/delete_btn", locals: { path: staff_path(@staff.id) }
+
+    .card.col-sm-12.shadow.p-3.mb-3.bg-body.rounded
+      .card-body
+        .row
+          .col-5.col-sm-2
+            | 名前
+          .col-7.col-sm-10.fw-bold
+            | #{@staff.full_name.presence || "-"}
+
+      .card-body style="background:#EEEEEE;"
+        .row
+          .col-5.col-sm-2
+            | #{Staff.human_attribute_name(:gender)}
+          .col-7.col-sm-10.fw-bold
+            | #{@staff.gender_i18n.presence || "-"}
+
+      .card-body
+        .row
+          .col-5.col-sm-2
+            | #{Staff.human_attribute_name(:email)}
+          .col-7.col-sm-10.fw-bold
+            | #{@staff.email.presence || "-"}
+
+      .card-body style="background:#EEEEEE;"
+        .row
+          .col-5.col-sm-2
+            | #{Staff.human_attribute_name(:role)}
+          .col-7.col-sm-10.fw-bold
+            | #{@staff.role_i18n.presence || "-"}
+
+      .card-body
+        .row
+          .col-5.col-sm-2
+            | 移動時間バッファ (単位:分)
+          .col-7.col-sm-10.fw-bold
+            | #{@staff.buffer_time.presence || "-"}分
+
+      .card-body style="background:#EEEEEE;"
+        .row
+          .col-5.col-sm-2
+            | #{Staff.human_attribute_name(:phone)}
+          .col-7.col-sm-10.fw-bold
+            | #{@staff.phone.presence || "-"}
+
+      .card-body
+        .row
+          .col-5.col-sm-2
+            | #{Staff.human_attribute_name(:gender)}
+          .col-7.col-sm-10.fw-bold
+            | #{@staff.gender_i18n.presence || "-"}
+
+      .card-body style="background:#EEEEEE;"
+        .row
+          .col-5.col-sm-2
+            | #{Staff.human_attribute_name(:birthday)}
+          .col-7.col-sm-10.fw-bold
+            | #{@staff.birthday.presence || "-"}
+
+      .card-body
+        .row
+          .col-5.col-sm-2
+            | #{Staff.human_attribute_name(:postal_code)}
+          .col-7.col-sm-10.fw-bold
+            | #{@staff.postal_code.presence || "-"}
+
+      .card-body style="background:#EEEEEE;"
+        .row
+          .col-5.col-sm-2
+            | #{Staff.human_attribute_name(:prefecture)}
+          .col-7.col-sm-10.fw-bold
+            | #{@staff.prefecture.presence || "-"}
+
+      .card-body
+        .row
+          .col-5.col-sm-2
+            | #{Staff.human_attribute_name(:address)}
+          .col-7.col-sm-10.fw-bold
+            | #{@staff.address.presence || "-"}
+
+      .card-body style="background:#EEEEEE;"
+        .row
+          .col-5.col-sm-2
+            | #{Staff.human_attribute_name(:hobby)}
+          .col-7.col-sm-10.fw-bold
+            | #{@staff.hobby.presence || "-"}
+
+      .card-body
+        .row
+          .col-5.col-sm-2
+            | #{Staff.human_attribute_name(:memo)}
+          .col-7.col-sm-10.fw-bold
+            | #{simple_format(@staff.memo).presence || "-"}
+
+    .container
+      .row.mb-3
+        - if @staff&.reservations.present?
+          center
+            = render partial: "components/edit_btn", locals: { label_name: "編集する", path: edit_staff_path(@staff.id) }
+        - else
+          .col-sm-6.col-md-6.col-6 style="text-align: right;"
+            = render partial: "components/edit_btn", locals: { label_name: "編集する", path: edit_staff_path(@staff.id) }
+          - if current_staff&.admin?
+            .col-sm-6.col-md-6.col-6
+              = render partial: "components/delete_btn", locals: { path: staff_path(@staff.id) }

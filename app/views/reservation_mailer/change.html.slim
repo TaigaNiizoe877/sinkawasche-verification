@@ -1,0 +1,28 @@
+p
+  = "#{@customer.full_name}様"
+p
+  br
+p
+  | 変更依頼が完了しました。＊変更またはキャンセルできない場合がございます。
+p
+  | 後日、メールまたは担当者からご連絡させて頂きます。
+p
+  | 変更依頼詳細
+p
+  | 変更依頼したい予約
+p
+  = "#{@reservation.start_at.strftime('%-m/%d %H:%M')}からの予約"
+p
+  | 変更依頼ステータス
+p
+  = "#{@request_change.status_i18n}"
+p
+  | 理由
+p
+= simple_format(@request_change.memo)
+p
+  = "〇〇日以内にメールまたは電話でご連絡させて頂きます。"
+p
+  = "お急ぎの場合は電話（090-2853-5363）お問合せください。"
+p
+  br

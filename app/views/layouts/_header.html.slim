@@ -1,0 +1,51 @@
+body
+  header.navbar.navbar-dark.sticky-top.bg-dark.flex-md-nowrap.p-0.shadow.row style="z-index: 20;"
+    .dropdown.col.text-left
+      .btn.btn-link.d-inline.d-lg-inline.d-xl-none.d-xxl-none.me-3 aria-expanded="false" data-bs-toggle="dropdown" href="#"
+        span.bi.bi-list.text-white style="font-size: 30px"
+      ul.dropdown-menu.text-small.shadow.ps-3.pe-1 aria-labelledby="dropdownNavLink"
+        .sidebar-heading.d-flex.justify-content-between.align-items-center.px-2.mt-1.mb-1
+          span.fs-6 管理
+        li
+          hr.dropdown-divider
+        li
+          = render partial: "components/sidebar_link", locals: { label_name: "お客様情報管理", path: "/customers", class_name: "dropdown-item bi bi-file-person-fill" }
+        li
+          = render partial: "components/sidebar_link", locals: { label_name: "スタッフ管理", path: "/staffs", class_name: "dropdown-item bi bi-person-lines-fill" }
+        - if current_staff.admin?
+          li
+            = render partial: "components/sidebar_link", locals: { label_name: "シフト管理", path: staff_shifts_path(start_date: Date.today.to_s), class_name: "dropdown-item bi bi-layers" }
+        - else
+          li
+            = render partial: "components/sidebar_link", locals: { label_name: "シフト管理", path: staff_calendar_staff_shifts_path(staff_id: current_staff.id), class_name: "dropdown-item bi bi-layers" }
+        li
+          = render partial: "components/sidebar_link", locals: { label_name: "予約管理", path: "/reservations", class_name: "dropdown-item bi bi-pencil-square" }
+        - if current_staff.admin?
+          .sidebar-heading.d-flex.justify-content-between.align-items-center.px-2.mt-3.mb-1
+            span.fs-6 マスター管理
+          li
+            hr.dropdown-divider
+          li
+            = render partial: "components/sidebar_link", locals: { label_name: "オプションマスタ", path: "/car_wash_options", class_name: "dropdown-item bi bi-newspaper" }
+          li
+            = render partial: "components/sidebar_link", locals: { label_name: "洗車コースマスタ", path: "/car_wash_menus", class_name: "dropdown-item bi bi-stars" }
+          li
+            = render partial: "components/sidebar_link", locals: { label_name: "出張料金マスタ", path: "/travel_fees", class_name: "dropdown-item bi bi-currency-dollar" }
+
+    .btn.btn-dark.col-lg-2.me-0.px-3.col-6.text-center style="text-align: left;"
+      center
+        span style="color: #ffc40c; font-weight: 900;" Sinkawasche
+
+    .text-left.col.d-flex.justify-content-end
+      .btn-group
+        .btn.dropdown-toggle.bg-dark.text-light[type="button" data-bs-toggle="dropdown" aria-expanded="false"]
+          i.bi.bi-person-fill.fs-4
+        ul.dropdown-menu.dropdown-menu-end
+          .sidebar-heading.d-flex.justify-content-between.align-items-center.px-2.mt-1.mb-1
+            span.fs-6 #{current_staff.full_name}
+          li
+            hr.dropdown-divider
+          li
+            = link_to "ログアウト", destroy_staff_session_path, { method: :delete, class: "dropdown-item", data: { turbo: false } }
+          li
+            = link_to "スタッフ情報", staff_path(current_staff), { method: :get, class: "dropdown-item", data: { turbo: false } }

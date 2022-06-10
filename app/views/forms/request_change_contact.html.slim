@@ -1,0 +1,50 @@
+.d-flex.justify-content-center.mt-3.mt-md-4.mb-3
+  i.justify-align-center.bi.bi-card-checklist.fs-4.me-2 style="text-shadow: 1px 1px 2px orange"
+  h2.text-dark.fst-italic style="text-shadow: 1px 1px 2px orange" 予約変更依頼
+= javascript_include_tag "select_menu", "data-turbo-track": "reload", defer: true
+
+.container.justify-content-center.col-11.col-md-10.col-xl-6.mb-5
+  = form_with namespace: "reservation", url: forms_creation_request_change_path, data: { turbo: false }, method: :post do |form|
+    .js-parentTarget
+        .card.shadow.rounded.js-childTarget.mt-1
+          .card-header.bg-white.border-bottom.border-info
+            .card-title.d-inline-flex.flex-row.align-items-center.mt-2
+              i.bi.bi-check2-square.fs-6.text-success.me-1
+              span.text-dark.fst-italic.fs-5 style="text-shadow: 1px 1px 2px orange" 変更依頼
+          .card-body
+            .mb-4
+              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                | 変更依頼したい予約選択
+                span.text-danger.ms-2 ※必須
+              .row.row-cols-1.row-cols-sm-2.row-cols-md-4
+                .col-md-4.me-1
+                  = form.text_field :reservation_name, value: "#{Reservation.find_by(id: params[:reservation_id]).start_at.strftime('%-m/%d %H:%M')}からの予約", class: "form-control", disabled: "true"
+                  = form.hidden_field :reservation_id, value: params[:reservation_id]
+            .mb-4
+              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                | 変更依頼の種別
+                span.text-danger.ms-2 ※必須
+              .row.row-cols-1.row-cols-sm-2.row-cols-md-4
+                .col-md-4.me-1
+                  = form.select :reservation_type, options_for_select(RequestChange.reservation_types.keys.map { |k| [I18n.t("enums.request_change.reservation_type.#{k}"), k] }, params[:status]), {}, {class: 'form-select shadow-sm mt-2 js-changeMaker'}
+            .mb-4
+              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                | キャンセルする場合はこちらに理由を記入
+              .form-group7.mt-2
+                = form.text_area :cancel_memo, class: "form-control", value: params[:memo]
+            .mb-4
+              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                | 変更を依頼する場合はこちらに理由を記入
+              .form-group7.mt-2
+                = form.text_area :change_memo, class: "form-control", value: params[:memo]
+
+    .row.justify-content-center.mt-3
+      button.btn.btn-primary.shadow.rounded.my-2.w-50 name="commit" type="submit" data-turbolinks="false"
+        | 送信する
+
+  .row.justify-content-center.mt-3.d-none.d-sm-inline.d-md-inline.d-lg-inline.d-xl-inline.d-xxl-inline
+    = link_to "#{forms_request_change_top_path(reservation_id: params[:reservation_id])}", {class: "btn btn-primary shadow rounded-circle text-center d-inline", style: "position: fixed;z-index: 99999;top: 55%;left: 5%;width: 4rem;height:4rem"}, data: { turbo: false } do
+      i.bi.bi-arrow-return-left.text-white style="font-size: 2.2rem"
+  .row.justify-content-center.mt-3.d-inline.d-sm-none.d-md-none.d-lg-none.d-xl-none.d-xxl-none
+    = link_to "#{forms_request_change_top_path(reservation_id: params[:reservation_id])}", {class: "btn btn-primary shadow rounded-circle text-center d-inline", style: "position: fixed;z-index: 99999;top: 55%;left: 2%;width: 3rem;height:3rem"}, data: { turbo: false } do
+      i.bi.bi-arrow-return-left.text-white style="font-size: 1.5rem"

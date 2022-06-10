@@ -1,0 +1,13 @@
+div
+  - if flash[:errors].present?
+    .alert.alert-danger
+      - flash[:errors].map do |error|
+        li.list-unstyled = error
+  - if flash[:error]
+    .alert.alert-danger = flash[:error]
+  - elsif flash[:error]
+    .alert.alert-danger = flash[:error]
+  - elsif flash[:notice]
+    .alert.alert-info = flash[:notice]
+  - elsif alert.present?
+    .alert.alert-danger = alert

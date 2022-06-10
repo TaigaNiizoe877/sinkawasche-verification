@@ -1,0 +1,59 @@
+main
+  .col-12.col-md-11.m-auto
+    .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.mt-5.mb-2.border-bottom.border-4
+      .ps-2.fs-3 予約一覧
+      .btn-toolbar.mb-2.mb-md-0
+        = link_to staff_shifts_path, class: "px-3 text-decoration-none" , onclick: "window.open(this.href,'hoge', 'height=800, width=400');return false;" do
+          | シフト
+          i.bi.bi-calendar-check.fs-5
+
+    = render partial: "components/flash_messages"
+
+    = render partial: "search"
+    .card.col-sm-12.shadow-sm.p-3.mb-5.bg-body.rounded.small
+      table.table.table-striped.table-sm.my-3
+        thead
+          tr
+            th.col-auto.p-0.m-0
+            th.col-sm-1.px-2 お客様情報
+            th.col-sm-1 スタッフ
+            th.col-sm-3.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell 作業時刻
+            th.col-sm-1.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell 状態
+            th.col-sm-2.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell お知らせメール
+            th.col-sm-2.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell 作業場所
+
+        tbody
+          - @reservations.each do |res|
+            tr
+              - if res.request_changes.present? && res.request_changes.where(status: "unread")
+                td.p-0.m-0
+                  .col style="border-right: 15px solid transparent;border-top: 15px solid #f2cb05;position: relative;padding: 0; width:0; higth:0;"
+              - else
+                td.p-0.m-0
+                  .col style="border-right: 15px solid transparent;border-top: 15px solid #C0C0C0;position: relative;padding: 0; width:0; higth:0;"
+              td.td_vertical_align_middle.px-2 = link_to "#{res&.customer&.full_name.presence}", "/customers/#{res&.customer&.id.presence || res.customer_id}"
+              td.td_vertical_align_middle
+                                          - if res&.staff.blank?
+                                            |未設定
+                                          - else
+                                            = link_to "#{res&.staff&.full_name.presence}", "/staffs/#{res&.staff&.id.presence || res.staff_id}"
+              td.td_vertical_align_middle.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell = "#{res&.start_at.strftime('%Y/%m/%d')} #{res&.start_at.strftime('%H:%M')} ~ #{res&.end_at.strftime('%H:%M')}"
+              td.td_vertical_align_middle.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell = res&.status_i18n
+              td.td_vertical_align_middle.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell
+                                          - if res.sent_email
+                                            .text-dark.small
+                                              = "※#{res&.status_i18n}メール送信済み"
+                                          - elsif !res.status.eql?("applying")
+                                            .text-danger.small
+                                              = "※#{res&.status_i18n}メール未送信"
+              td.td_vertical_align_middle.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell = res.working_location.full_address.truncate(20)
+              td.td_vertical_align_middle
+                .btn-group.dropstart.d-flex.flex-row-reverse.px-1
+                  span.bi.bi-three-dots aria-expanded="false" data-bs-toggle="dropdown" type="button"  style="color: #black; font-size: 20px"
+                  ul.dropdown-menu
+                    li
+                      = link_to "閲覧", "#{reservation_path(res.id)}", { method: :show, class: "dropdown-item" }
+                    li
+                      = link_to "編集", "#{edit_reservation_path(res.id)}", { method: :get, class: "dropdown-item" }
+
+    = paginate @reservations, theme: 'bootstrap-5'

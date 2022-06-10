@@ -1,0 +1,364 @@
+script[src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"]
+= render partial: "progress", locals: { value: 20, text: "車情報・メニュー選択" }
+= javascript_include_tag "select_menu", "data-turbo-track": "reload", defer: true
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+.container.justify-content-center.col-11.col-md-10.col-xl-6.mb-5
+  = form_with namespace: "reservation", url: next_step_path(@current_step), method: :get do |form|
+    / - select_menus = session[:select_menus]
+    .js-parentTarget
+      .card.shadow.rounded
+        .card-header.bg-white.border-bottom.border-info
+          .card-title.d-inline-flex.flex-row.align-items-center.mt-2
+            i.bi.bi-check2-square.fs-6.text-success.me-1
+            span.text-dark.fst-italic.fs-5 style="text-shadow: 1px 1px 2px orange" 作業エリア
+          .card.border-1.p-1
+            table.table.small
+              .card-header.bg-white.small.p-0
+                | 【対応エリア】
+              tbody.small
+                tr
+                  th
+                    | 出張料無料
+                  td
+                    | 福岡市中央区、博多区、東区、南区、城南区、早良区、西区
+                tr
+                  th
+                    .border-right-1.border-bark
+                      | 別途出張料 ¥1,000
+                  td
+                    | 粕屋志免、春日、那珂川、大野城など福岡市近郊エリア
+                tr
+                  th
+                    | その他の地域
+                  td
+                    | ご相談承ります
+        - if @current_customer.present?
+          .card-body
+            .mb-4
+              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                | 作業場所の郵便番号
+              .row.row-cols-1.row-cols-sm-2.row-cols-md-4
+                .col-md-4.mt-2
+                  = form.text_field :w_postal_code, class: "form-control", value: session[:w_postal_code], readonly: true
+            .mb-4
+              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                | 都道府県(自動入力)
+              .row.row-cols-1.row-cols-sm-2.row-cols-md-4
+                .col-md-4.mt-2
+                  = form.text_field :w_prefecture, class: "form-control", value: session[:w_prefecture], readonly: true
+            .mb-4
+              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                | 住所(自動入力)
+              .form-group7.mt-2
+                = form.text_field :w_address_1, class: "form-control", value: session[:w_address_1], readonly: true
+        - else @current_customer.present?
+          .card-body
+            .mb-4
+              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                | 作業場所の郵便番号
+                span.text-danger.ms-2 ※必須
+              .row.row-cols-1.row-cols-sm-2.row-cols-md-4
+                .col-md-4.mt-2
+                  = form.text_field :w_postal_code, class: "form-control", value: session[:w_postal_code], onkeyup: "AjaxZip3.zip2addr(this,'','w_prefecture','w_address_1');", placeholder: "例:8100000", required: "true", autofocus: "true"
+            .mb-4
+              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                | 都道府県(自動入力)
+              .row.row-cols-1.row-cols-sm-2.row-cols-md-4
+                .col-md-4.mt-2
+                  = form.text_field :w_prefecture, class: "form-control", value: session[:w_prefecture], readonly: true
+            .mb-4
+              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                | 住所(自動入力)
+              .form-group7.mt-2
+                = form.text_field :w_address_1, class: "form-control", value: session[:w_address_1], readonly: true
+      - if session[:select_menus].present?
+        - session[:select_menus].each.with_index(1) do |selected_menu, i|
+          .card.shadow.rounded.js-childTarget.mt-1
+            .card-header.bg-white.border-bottom.border-info
+              .card-title.d-inline-flex.flex-row.align-items-center.mt-2
+                i.bi.bi-check2-square.fs-6.text-success.me-1
+                span.text-dark.fst-italic.fs-5 style="text-shadow: 1px 1px 2px orange" 車のサイズ、車種
+            .card-body
+              .mb-4
+                label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                  | 車のサイズを選択してください
+                  span.text-danger.ms-2 ※必須
+                br
+                a.link-info[type="button" data-bs-toggle="modal" data-bs-target="#sizeModal"]
+                    | サイズについてはこちら
+                .form-group.mt-2.row
+                  - car_sizes = CarSize.all
+                  - car_sizes.each do |size|
+                    .mb-1
+                      = form.radio_button :car_size_id, value=size.id, checked: size.id == selected_menu[:car_size_id].to_i, id: "#{i}_car_size_id_#{size.id}", name: "reservation[#{i}][car_size_id]", class: "form-check-input shadow-sm me-2 mb-1 js-changeSize"
+                      = form.label "#{size&.name}", for: "reservation_#{i}_car_size_id_#{size.id}", class: "form-check-label text-uppercase me-2"
+              .mb-4
+                label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                  | 車種を選択してください
+                .row.row-cols-1.row-cols-sm-2.row-cols-md-4
+                  .col-md-4.me-1
+                    = form.collection_select :car_maker_id, CarMaker.all, :id, :name, {selected: selected_menu[:car_maker_id], prompt: "選択してください"}, {name: "reservation[#{i}][car_maker_id]", id: "#{i}_car_maker_id", class: "form-select shadow-sm mt-2 js-changeMaker"}
+                  .col-md-4.me-1
+                    = form.collection_select :car_model_id, CarModel.all, :id, :name, {selected: selected_menu[:car_model_id], prompt: "選択してください"}, {name: "reservation[#{i}][car_model_id]", id: "#{i}_car_model_id", class: "form-select shadow-sm mt-2 js-changeModel"}
+              .mb-2
+                label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                  | お持ちの車が見当たらない場合はこちらへ入力してください
+                .row.mt-2
+                  .form-group.col-md-8
+                    = form.text_field :car_model_name, name: "reservation[#{i}][car_model_name]", id: "#{i}_car_name", class: "form-control shadow-sm", value: selected_menu[:car_model_name]
+
+            .card-header.bg-white.border-bottom.border-info
+              .card-title.d-inline-flex.flex-row.align-items-center.mt-2
+                i.bi.bi-check2-square.fs-6.text-success.me-1
+                span.text-dark.fst-italic.fs-5 style="text-shadow: 1px 1px 2px orange" ご希望のメニュー
+            .card-body
+              .mb-4
+                label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                  | メニューを選択してください
+                  span.text-danger.ms-2 ※必須
+                br
+                a.link-info[type="button" data-bs-toggle="modal" data-bs-target="#menuModal"]
+                  | メニュー詳細はこちら
+                .form-group.ms-2.mt-2
+                  .js-changeMenuField.row
+                    - wash_menus = CarWashMenu.where(car_size_id: selected_menu[:car_size_id], status: true)
+                    - wash_menus.each do |menu|
+                      .p-0
+                        = form.radio_button :car_wash_menu_id, value=menu.id, checked: menu.id == selected_menu[:car_wash_menu_id].to_i, id: "#{i}_car_wash_menu_id_#{menu.id}", name: "reservation[#{i}][car_wash_menu_id]", class: "form-check-input mx-1 mb-1 shadow-sm"
+                        = form.label "#{menu.name} (¥#{menu.price&.to_fs(:delimited)})", for: "reservation_#{i}_car_wash_menu_id_#{menu.id}", class: "form-check-label p-0"
+                      .mx-2.mb-1
+                        span #{menu.memo ? menu.memo : ""}
+              .mb-4
+                label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                  | オプションを選択してください
+                br
+                a.link-info[type="button" data-bs-toggle="modal" data-bs-target="#optionModal"]
+                  | オプション詳細はこちら
+                .form-group.ms-2.mt-2
+                  .js-changeOptionField.row
+                    - wash_options = CarWashOption.where(car_size_id: selected_menu[:car_size_id], status: true)
+                    - selected_option_ids =  selected_menu[:car_wash_option_ids].present? ? selected_menu[:car_wash_option_ids].map { |option| option[1][:id] } : []
+                    - wash_options.each_with_index do |option, index|
+                      .p-0
+                        = form.check_box :car_wash_option_id, { checked: selected_option_ids&.include?(option.id.to_s), id: "#{i}_car_wash_option_id_#{option.id}", name: "reservation[#{i}][car_wash_option_ids][#{index}][id]", class: "form-check-input mx-1 mb-1 shadow-sm" }, option.id, nil
+                        = form.label "#{option.name} (¥#{option.price&.to_fs(:delimited)})", for: "reservation_#{i}_car_wash_option_id_#{option.id}", class: "form-check-label p-0"
+                      .mx-2.mb-1
+                        span #{option.memo ? option.memo : ""}
+              .mb-2
+                label.fst-italic.fw-bold.text-dark.border-bottom.border-warning
+                  | 2台以上ご希望の方はこちらから追加してください
+                .btn.ms-2.js-addMenuField
+                  i.bi.bi-plus-square.text-primary.fs-4
+                .btn
+                  i.bi.bi-dash-square.text-secondary.fs-4.js-deleteMenuField
+
+      - else
+        .card.shadow.rounded.js-childTarget.mt-1
+          .card-header.bg-white.border-bottom.border-info
+            .card-title.d-inline-flex.flex-row.align-items-center.mt-2
+              i.bi.bi-check2-square.fs-6.text-success.me-1
+              span.text-dark.fst-italic.fs-5 style="text-shadow: 1px 1px 2px orange" 車のサイズ、車種
+          .card-body
+            .mb-4
+              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                | 車のサイズを選択してください
+                span.text-danger.ms-2 ※必須
+              br
+              a.link-info.small[type="button" data-bs-toggle="modal" data-bs-target="#sizeModal"]
+                | サイズについてはこちら
+              .form-group.mt-2.row
+                - car_sizes = CarSize.all
+                - car_sizes.each do |size|
+                  .mb-1
+                    = form.radio_button :car_size_id, value=size.id, checked: size.id == car_sizes.first.id, id: "1_car_size_id_#{size.id}", name: "reservation[1][car_size_id]", class: "form-check-input shadow-sm me-2 mb-1 js-changeSize"
+                    = form.label "#{size.name}", for: "reservation_1_car_size_id_#{size.id}", class: "form-check-label text-uppercase me-2"
+            .mb-4
+              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                | 車種を選択してください
+              .row.row-cols-1.row-cols-sm-2.row-cols-md-4
+                .col-md-4.me-1
+                  = form.collection_select :car_maker_id, CarMaker.all, :id, :name, {prompt: "選択してください"}, {name: "reservation[1][car_maker_id]", id: "1_car_maker_id", class: "form-select shadow-sm mt-2 js-changeMaker"}
+                .col-md-4.me-1
+                  = form.collection_select :car_model_id, CarModel.all, :id, :name, {prompt: "選択してください"}, {name: "reservation[1][car_model_id]", id: "1_car_model_id", class: "form-select shadow-sm mt-2 js-changeModel"}
+            .mb-2
+              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                | お持ちの車が見当たらない場合はこちらへ入力してください（わかる方のみ）
+              .row.mt-2
+                .form-group.col-md-8
+                  = form.text_field :car_model_name, name: "reservation[1][car_model_name]", id: "1_car_name", class: "form-control shadow-sm", value: ""
+
+          .card-header.bg-white.border-bottom.border-info
+            .card-title.d-inline-flex.flex-row.align-items-center.mt-2
+              i.bi.bi-check2-square.fs-6.text-success.me-1
+              span.text-dark.fst-italic.fs-5 style="text-shadow: 1px 1px 2px orange" ご希望のメニュー
+          .card-body
+            .mb-4
+              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                | 洗車メニューを選択してください
+                span.text-danger.ms-2 ※必須
+              br
+              a.link-info[type="button" data-bs-toggle="modal" data-bs-target="#menuModal"]
+                | メニュー詳細はこちら
+              .form-group.ms-2.mt-2
+                .js-changeMenuField.row
+                  - wash_menus = CarWashMenu.where(car_size_id: CarSize.all.first.id, status: true)
+                  - wash_menus.each do |menu|
+                    .p-0
+                      = form.radio_button :car_wash_menu_id, value=menu.id, checked: menu.id == wash_menus.first.id, id: "1_car_wash_menu_id_#{menu.id}", name: "reservation[1][car_wash_menu_id]", class: "form-check-input mx-1 mb-1 shadow-sm"
+                      = form.label "#{menu.name} (¥#{menu.price&.to_fs(:delimited)})", for: "reservation_1_car_wash_menu_id_#{menu.id}", class: "form-check-label p-0"
+                    .mx-2.mb-1
+                      span #{menu.memo ? menu.memo : ""}
+            .mb-4
+              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                | オプションメニューを選択してください
+              br
+              a.link-info[type="button" data-bs-toggle="modal" data-bs-target="#optionModal"]
+                  | オプション詳細はこちら
+              .form-group.ms-2.mt-2
+                .js-changeOptionField.row
+                  - wash_options = CarWashOption.where(car_size_id: CarSize.all.first.id, status: true)
+                  - wash_options.each_with_index do |option, index|
+                    .p-0
+                      = form.check_box :car_wash_option_id, { id: "1_car_wash_option_id_#{option.id}", name: "reservation[1][car_wash_option_ids][#{index}][id]", class: "form-check-input mx-1 mb-1 shadow-sm" }, option.id, nil
+                      = form.label "#{option.name} (¥#{option.price&.to_fs(:delimited)})", for: "reservation_1_car_wash_option_id_#{option.id}", class: "form-check-label p-0"
+                    .mx-2.mb-1
+                      span #{option.memo ? option.memo : ""}
+            .mb-2
+              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning
+                | 2台以上ご希望の方はこちらから追加してください
+              .btn.ms-2.js-addMenuField
+                i.bi.bi-plus-square.text-primary.fs-4
+              .btn
+                i.bi.bi-dash-square.text-secondary.fs-4.js-deleteMenuField
+
+    .row.justify-content-center.mt-3
+      button.btn.btn-primary.shadow.rounded.my-2.w-50 name="commit" type="submit"
+        | 進む
+
+  .row.justify-content-center.mt-3.d-none.d-sm-inline.d-md-inline.d-lg-inline.d-xl-inline.d-xxl-inline
+    = link_to "#{@customer.present? ? prev_step_path(@current_step) : forms_top_path}", {class: "btn btn-primary shadow rounded-circle text-center d-inline", style: "position: fixed;z-index: 99999;top: 55%;left: 5%;width: 4rem;height:4rem"}, data: { turbo: false } do
+      i.bi.bi-arrow-return-left.text-white style="font-size: 2.2rem"
+  .row.justify-content-center.mt-3.d-inline.d-sm-none.d-md-none.d-lg-none.d-xl-none.d-xxl-none
+    = link_to "#{@customer.present? ? prev_step_path(@current_step) : forms_top_path}", {class: "btn btn-primary shadow rounded-circle text-center d-inline", style: "position: fixed;z-index: 99999;top: 55%;left: 2%;width: 3rem;height:3rem"}, data: { turbo: false } do
+      i.bi.bi-arrow-return-left.text-white style="font-size: 1.5rem"
+
+/ メニュー詳細modal
+#menuModal.modal.fade[tabindex="-1" aria-labelledby="menuModalLabel" aria-hidden="true"]
+  .modal-dialog
+    .modal-content
+      .modal-body
+        button.btn-close.mb-1[type="button" data-bs-dismiss="modal" aria-label="Close"]
+        - car_menus = {}
+        - CarSize.all.each do |cs|
+          - car_menus[cs.id] = CarWashMenu.where(status: true, car_size_id: cs.id)
+        ul.nav.nav-tabs.mb-2[role="tablist"]
+          - car_menus.keys.each.with_index(1) do |cs_id, i|
+            li.nav-item.mx-2
+              - if i == 1
+                a.active.nav-link.p-1.m-0.mb-1 data-toggle="tab" href="#item#{cs_id}" role="tab" aria-controls="item#{cs_id}" aria-selected="true" id="item#{cs_id}-tab" 
+                  .small #{CarSize.find_by(id: cs_id).name + "サイズ"}
+              - else
+                a.nav-link.p-1.m-0.mb-1 data-toggle="tab" href="#item#{cs_id}" role="tab" aria-controls="item#{cs_id}" aria-selected="true" id="item#{cs_id}-tab" 
+                  .small #{CarSize.find_by(id: cs_id).name + "サイズ"}
+
+        .tab-content
+          - car_menus.keys.each.with_index(1) do |cs_id, i|
+            - if i == 1
+              .tab-pane.fade.show.active role="tabpanel" aria-labelledby="item#{cs_id}-tab" id="item#{cs_id}"
+                - car_menus[cs_id].each do |menu|
+                  .card.mb-2.shadow
+                    .card-header style="background: linear-gradient(132deg, rgba(255,196,4,1) 0%, rgba(255,196,4,1) 0%, rgba(255,250,235,1) 0%, rgba(255,196,4,1) 21%, rgba(255,196,4,1) 80%, rgba(255,234,166,1) 100%);"
+                      |【#{menu.name}】 (#{menu.price_jpy})
+                      br
+                      | #{menu.memo}
+                    .card-body
+                      | #{simple_format(menu.detail_memo)}
+            - else
+              .tab-pane.fade role="tabpanel" aria-labelledby="item#{cs_id}-tab" id="item#{cs_id}"
+                - car_menus[cs_id].each do |menu|
+                  .card.mb-2.shadow
+                    .card-header style="background: linear-gradient(132deg, rgba(255,196,4,1) 0%, rgba(255,196,4,1) 0%, rgba(255,250,235,1) 0%, rgba(255,196,4,1) 21%, rgba(255,196,4,1) 80%, rgba(255,234,166,1) 100%);"
+                      |#{menu.name} (#{menu.price_jpy})
+                      br
+                      | #{menu.memo}
+                    .card-body
+                      | #{simple_format(menu.detail_memo)}
+        
+/ オプション詳細modal
+#optionModal.modal.fade[tabindex="-1" aria-labelledby="optionModalLabel" aria-hidden="true"]
+  .modal-dialog
+    .modal-content
+      .modal-body
+        button.btn-close.mb-1[type="button" data-bs-dismiss="modal" aria-label="Close"]
+        - car_options = {}
+        - CarSize.all.each do |cs|
+          - car_options[cs.id] = CarWashOption.where(status: true, car_size_id: cs.id)
+        ul.nav.nav-tabs.mb-2[role="tablist"]
+          - car_options.keys.each.with_index(1) do |cs_id, i|
+            li.mx-2
+              - if i == 1
+                a.active.nav-link.p-1.m-0.mb-1 data-toggle="tab" href="#itemOp#{cs_id}" role="tab" aria-controls="itemOp#{cs_id}" aria-selected="true" id="itemOp#{cs_id}-tab" 
+                  .small #{CarSize.find_by(id: cs_id).name + "サイズ"}
+              - else
+                a.nav-link.p-1.m-0.mb-1 data-toggle="tab" href="#itemOp#{cs_id}" role="tab" aria-controls="itemOp#{cs_id}" aria-selected="true" id="itemOp#{cs_id}-tab" 
+                  .small #{CarSize.find_by(id: cs_id).name + "サイズ"}
+
+        .tab-content
+          - car_menus.keys.each.with_index(1) do |cs_id, i|
+            - if i == 1
+              .tab-pane.fade.show.active role="tabpanel" aria-labelledby="itemOp#{cs_id}-tab" id="itemOp#{cs_id}"
+                - car_options[cs_id].each do |option|
+                  .card.mb-2.shadow
+                    .card-header style="background: linear-gradient(132deg, rgba(255,196,4,1) 0%, rgba(255,196,4,1) 0%, rgba(255,250,235,1) 0%, rgba(255,196,4,1) 21%, rgba(255,196,4,1) 80%, rgba(255,234,166,1) 100%);"
+                      |#{option.name} (#{option.price_jpy})
+                      br
+                      | #{option.memo}
+                    .card-body
+                      | #{simple_format(option.detail_memo)}
+            - else
+              .tab-pane.fade role="tabpanel" aria-labelledby="itemOp#{cs_id}-tab" id="itemOp#{cs_id}"
+                - car_options[cs_id].each do |option|
+                  .card.mb-2.shadow
+                    .card-header style="background: linear-gradient(132deg, rgba(255,196,4,1) 0%, rgba(255,196,4,1) 0%, rgba(255,250,235,1) 0%, rgba(255,196,4,1) 21%, rgba(255,196,4,1) 80%, rgba(255,234,166,1) 100%);"
+                      |#{option.name} (#{option.price_jpy})
+                      br
+                      | #{option.memo} 
+                    .card-body
+                      | #{simple_format(option.detail_memo)}
+
+/ サイズ詳細modal
+#sizeModal.modal.fade[tabindex="-1" aria-labelledby="sizeModalLabel" aria-hidden="true"]
+  .modal-dialog
+    .modal-content
+      .modal-body
+        button.btn-close.mb-1[type="button" data-bs-dismiss="modal" aria-label="Close"]
+        - car_sizes = CarSize.all
+        ul.nav.nav-tabs.mb-2[role="tablist"]
+          - car_sizes.each.with_index(1) do |cs, i|
+            li.mx-2
+              - if i == 1
+                a.active.nav-link.p-1.m-0.mb-1 data-toggle="tab" href="#itemSi#{cs.id}" role="tab" aria-controls="itemSi#{cs.id}" aria-selected="true" id="itemSi#{cs.id}-tab" 
+                  .small #{cs.name + "サイズ"}
+              - else
+                a.nav-link.p-1.m-0.mb-1 data-toggle="tab" href="#itemSi#{cs.id}" role="tab" aria-controls="itemSi#{cs.id}" aria-selected="true" id="itemSi#{cs.id}-tab" 
+                  .small #{cs.name + "サイズ"}
+
+        .tab-content
+          - car_sizes.each.with_index(1) do |cs, i|
+            - if i == 1
+              .tab-pane.fade.show.active role="tabpanel" aria-labelledby="itemSi#{cs.id}-tab" id="itemSi#{cs.id}"
+                .card.mb-2.shadow
+                  .card-header style="background: linear-gradient(132deg, rgba(255,196,4,1) 0%, rgba(255,196,4,1) 0%, rgba(255,250,235,1) 0%, rgba(255,196,4,1) 21%, rgba(255,196,4,1) 80%, rgba(255,234,166,1) 100%);"
+                    |#{cs.name + "サイズ"}
+                  .card-body
+                    | #{simple_format(cs.memo)}
+            - else
+              .tab-pane.fade role="tabpanel" aria-labelledby="itemSi#{cs.id}-tab" id="itemSi#{cs.id}"
+                .card.mb-2.shadow
+                  .card-header style="background: linear-gradient(132deg, rgba(255,196,4,1) 0%, rgba(255,196,4,1) 0%, rgba(255,250,235,1) 0%, rgba(255,196,4,1) 21%, rgba(255,196,4,1) 80%, rgba(255,234,166,1) 100%);"
+                    |#{cs.name + "サイズ"}
+                  .card-body
+                    |  #{simple_format(cs.memo)}

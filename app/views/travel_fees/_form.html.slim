@@ -1,0 +1,13 @@
+.card.col-sm-12.shadow.p-3.mb-5.bg-body.rounded
+  .col-sm-6.pb-2
+    label.pb-2 都道府県
+    = f.text_field :prefecture, class: "form-control"
+  .col-sm-6.pb-2
+    label.pb-2 住所
+    = f.text_field :address, class: 'form-control'
+  .col-sm-6.pb-2
+    label.pb-2 出張料金
+    = f.text_field :price, class: "form-control", type: "number"
+
+center.pb-5
+  = render partial: "components/submit_btn", locals: { f: f }

@@ -1,0 +1,20 @@
+
+.container.w-100.position-absolute.top-50.start-50.translate-middle
+  .row.justify-content-center
+    .card.col-11.col-md-5.col-xl-4.shadow.rounded-2
+      .card-header.bg-white.text-center
+        .mx-auto.mt-3
+          i.bi.bi-person-circle.fs-1.text-warning
+        .card-title.text-center.mt-2
+          h3.text-dark.fst-italic style="text-shadow: 1px 1px 2px orange" Please Input Email
+      .card-body
+        = form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }, data: { turbo: false }) do |f|
+          = render "devise/shared/error_messages", resource: resource
+          .mb-2
+            = f.label :email
+            .input-group
+              i.input-group-text.bi.bi-envelope
+              = f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control shadow-sm", value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email)
+          .actions
+            = f.submit t('.resend_confirmation_instructions'), class: "w-100 btn btn-lg btn-outline-primary btn-block shadow-sm"
+        = render "devise/shared/links"

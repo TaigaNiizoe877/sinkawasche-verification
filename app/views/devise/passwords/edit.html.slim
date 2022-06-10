@@ -1,0 +1,24 @@
+.container.mt-md-5.mt-2
+  .row.justify-content-center
+    .card.col-11.col-md-5.col-xl-4.shadow.rounded-2
+      .card-header.bg-white.text-center
+        .mx-auto.mt-3
+          i.bi.bi-person-circle.fs-1.text-warning
+        .card-title.text-center.mt-2
+          h3.text-dark.fst-italic style="text-shadow: 1px 1px 2px orange" Please Sign in
+      .card-body
+        = form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }, data: { turbo: false }) do |f|
+          = f.hidden_field :reset_password_token, value: params[:reset_password_token]
+          .mt-2.mb-2
+            label for="inputPassword" class="fst-italic text-dark" New password
+            .input-group
+              i.input-group-text.bi.bi-key
+              = f.password_field :password, class: "form-control shadow-sm"
+          .mt-2.mb-2
+            label for="inputPassword" class="fst-italic text-dark" New password(確認)
+            .input-group
+              i.input-group-text.bi.bi-key
+              = f.password_field :password_confirmation, class: "form-control shadow-sm"
+          .mt-4.mb-1.text-center
+            button.w-100.btn.btn-lg.btn-outline-primary.btn-block.shadow-sm type="submit"
+              i.bi.bi-unlock-fill  Login

@@ -1,0 +1,36 @@
+.simple-calendar
+  .calendar-heading.p-2.d-flex.justify-content-between
+    col-3.my-auto
+      = link_to calendar.url_for_previous_view, class: "text-decoration-none"
+        i.bi.bi-caret-left-fill.text-primary
+        = "前月"
+    col-3.my-auto
+      span.calendar-title.mx-2.h4
+        = start_date.strftime("%Y年%m月")
+    col-3.my-auto
+      = link_to calendar.url_for_next_view, class: "text-decoration-none"
+        = "翌月"
+        i.bi.bi-caret-right-fill.text-primary
+  table
+    thead
+      tr
+        - date_range.slice(0, 7).each do |day|
+          th
+            - if day.wday.eql?(0)
+              / 日曜日
+              .text-danger
+                = t('date.abbr_day_names')[day.wday]
+            - elsif day.wday.eql?(6)
+              / 土曜日
+              .text-primary
+                = t('date.abbr_day_names')[day.wday]
+            - else
+              / 平日
+              .text-black
+                = t('date.abbr_day_names')[day.wday]
+    tbody
+      - date_range.each_slice(7) do |week|
+        tr
+          - week.each do |day|
+            = content_tag :td, class: calendar.td_classes_for(day) do
+              - passed_block.call day, sorted_events.fetch(day, [])

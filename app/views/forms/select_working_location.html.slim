@@ -1,0 +1,117 @@
+script[src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"]
+= javascript_include_tag "input_info", "data-turbo-track": "reload", defer: true
+= render partial: "progress", locals: { value: 10, text: "作業場所選択" }
+
+.container.justify-content-center.col-11.col-md-10.col-xl-6.mb-5
+  .card.shadow.rounded
+    .card-body.my-2
+      .row.mb-3
+        button.btn.btn-outline-secondary.col-10.m-1.p-0.py-3.rounded.mx-auto.py-4 style="border-style: dashed;" type="button" data-bs-toggle="modal" data-bs-target="#sizeModalNew"
+          .text-dark.small
+            i.bi.bi-plus-square-dotted.pl-1.mx-1
+            | 新しい住所
+        / formモーダル
+        #sizeModalNew.modal.fade[tabindex="-1" aria-labelledby="sizeModalNew" aria-hidden="true"]
+          .modal-dialog
+            .modal-content
+              .modal-body
+                button.btn-close.mb-2[type="button" data-bs-dismiss="modal" aria-label="Close"]
+                .card
+                  .card-header
+                    .card-title.my-2 新規作成
+                  .card-body
+                    = form_for(:working_location, url: forms_register_working_location_path, local: true, data: { turbo: false }) do |form|
+                      = form.hidden_field :id, value: "new"
+                      = form.hidden_field :customer_id, value: @customer.id
+                      .mb-4
+                        label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                          | 郵便番号
+                        span.text-danger.ms-2 ※必須
+                        .form-group.col-md-8
+                          = form.text_field :postal_code, class: "form-control", onkeyup: "AjaxZip3.zip2addr( this, '', 'new_prefecture', 'new_address_first');", placeholder: "例:8100000", required: "true"
+                      .mb-4
+                        label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                          | 都道府県
+                        .row.row-cols-1.row-cols-sm-2.row-cols-md-4
+                          .form-group.col-md-8
+                            = form.text_field :prefecture, class: "form-control", readonly: true, name: "new_prefecture"
+                      .mb-4
+                        label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                          | 住所
+                        .form-group.col-md-8
+                          = form.text_field :address_first, class: "form-control", readonly: true, name: "new_address_first"
+                      .mb-4
+                        label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                          | 番地以下
+                        span.text-danger.ms-2 ※必須
+                        .form-group.col-md-8
+                          = form.text_field :address_second, class: "form-control", required: "true"
+                      .mb-4
+                        label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                          | 建物
+                        .form-group.col-md-8
+                          = form.text_field :building, class: "form-control"
+                      .row.justify-content-center.mt-3
+                        button.btn.btn-primary.shadow.rounded.my-2.w-50 name="commit" type="submit"
+                          | 保存
+      - @customer.working_locations.sort_by{|val| val.updated_at }.reverse.each do |wl|
+        .row.mb-3
+          = link_to forms_select_menu_path(w_id: wl.id), class: "text-decoration-none btn btn-outline-secondary border-1 col-10 py-3 px-3 rounded shadow mx-auto" do
+            p.m-0.text-dark.small.text-start
+              | #{wl.postal_code}
+            p.m-0.text-dark.small.text-start
+              | #{wl.full_address}
+          .row.col-12.mx-auto.text-right
+            .col-11.d-flex.justify-content-end
+              a.mx-2[type="button" data-bs-toggle="modal" data-bs-target="#formModal#{wl.id}"]
+                .text-dark.small
+                  i.bi.bi-pencil-square
+                  | 変更
+              = link_to forms_destroy_working_location_path(working_location_id: wl.id), data: { turbo_method: :post }, class: "text-decoration-none" do
+                .text-dark.small
+                  i.bi.bi-trash
+                  | 削除
+              / formモーダル
+              .modal.fade[tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true" id="formModal#{wl.id}"]
+                .modal-dialog
+                  .modal-content
+                    .modal-body
+                      button.btn-close.mb-2[type="button" data-bs-dismiss="modal" aria-label="Close"]
+                      .card
+                        .card-header
+                          .card-title.my-2 編集
+                        .card-body
+                          = form_for(:working_location, url: forms_register_working_location_path, local: true, data: { turbo: false }) do |form|
+                            = form.hidden_field :id, value: wl.id 
+                            .mb-4
+                              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                                | 郵便番号
+                              span.text-danger.ms-2 ※必須
+                              .form-group.col-md-8
+                                = form.text_field :postal_code, class: "form-control", value: wl.postal_code, onkeyup: "AjaxZip3.zip2addr( this, '', '#{wl.id}_prefecture', '#{wl.id}_address_first');", placeholder: "例:8100000", required: "true"
+                            .mb-4
+                              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                                | 都道府県
+                              .row.row-cols-1.row-cols-sm-2.row-cols-md-4
+                                .form-group.col-md-8
+                                  = form.text_field :prefecture, class: "form-control", value: wl.prefecture, readonly: true, name: "#{wl.id}_prefecture"
+                            .mb-4
+                              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                                | 住所
+                              .form-group.col-md-8
+                                = form.text_field :address_first, class: "form-control", value: wl.address_first, readonly: true, name: "#{wl.id}_address_first"
+                            .mb-4
+                              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                                | 番地以下
+                              span.text-danger.ms-2 ※必須
+                              .form-group.col-md-8
+                                = form.text_field :address_second, class: "form-control", value: wl.address_second, required: "true"
+                            .mb-4
+                              label.fst-italic.fw-bold.text-dark.border-bottom.border-warning.mb-2
+                                | 建物
+                              .form-group.col-md-8
+                                = form.text_field :building, class: "form-control", value: wl.building
+                            .row.justify-content-center.mt-3
+                              button.btn.btn-primary.shadow.rounded.my-2.w-50 name="commit" type="submit"
+                                | 保存
+

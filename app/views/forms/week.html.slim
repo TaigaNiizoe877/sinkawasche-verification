@@ -1,0 +1,10 @@
+.container
+  .row
+    .col-12.text-center
+      h1
+        | 予約画面
+      p
+        | 3ヶ月先まで予約することができます。
+    .col-12.mt-3
+      = week_calendar events: @reservations do |date, reservations|
+        = date.day

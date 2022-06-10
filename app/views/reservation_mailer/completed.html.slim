@@ -1,0 +1,13 @@
+p
+  = "#{@customer.full_name}様"
+p
+  br
+p
+  | この度は、sinkawacheにご利用いただき誠にありがとうございます。
+- if @staff.present?
+  p
+    = "今回洗車を担当させていただきました、#{@staff.family_name}です。"
+p
+  | #{@customer.full_name}様の、またのご利用を心よりお待ちしております。
+p
+  br

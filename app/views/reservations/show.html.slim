@@ -1,0 +1,184 @@
+main
+  .col-12.col-md-11.m-auto
+    .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.mt-5.mb-2.border-bottom.border-4
+      .ps-2.d-flex.align-items-center
+        .fs-3 予約詳細
+        = link_to "予約一覧に戻る", "#{reservations_path}", { method: :index, class: "bi bi-chevron-left ps-4 pt-2" }
+      .btn-toolbar.mb-2.mb-md-0.d-none.d-sm-flex
+        - if !@reservation.sent_email && @reservation.status != "applying"
+          = link_to send_email_reservation_path(@reservation), data: { "turbo-method": :post }, class: "btn btn-sm btn-outline-primary mx-1 shadow rounded-pill px-4" do
+            = "#{Reservation.statuses_i18n[@reservation.status]}メール送信"
+            i.bi.bi-send
+        = render partial: "components/edit_btn", locals: { label_name: "編集する", path: edit_reservation_path(@reservation.id) }
+        - if @reservation&.reservation_infos.blank?
+          = render partial: "components/delete_btn", locals: { path: reservation_path(@reservation.id) }
+    = render partial: "components/flash_messages"
+  .container
+    .row
+      .col-lg-7
+        .card.col-sm-12.shadow.p-3.mb-3.bg-body.rounded
+          .card-header.bg-white.border-bottom
+            .card-title.d-inline-flex.flex-row.align-items-center.mt-2
+              span.text-dark.fs-4 予約情報
+              - if !@reservation.sent_email && @reservation.status != "applying"
+                .text-danger.fs-5.mx-2
+                  = "※#{Reservation.statuses_i18n[@reservation.status]}メール未送信"
+          .card-body.fs-6
+            .row.py-2 style="background:#EEEEEE;"
+              .col-5.col-sm-2
+                | お客様名
+              .col-7.col-sm-10.fw-bold
+                | #{@reservation.customer.full_name.presence  || "-"}
+
+            .row.py-2
+              .col-5.col-sm-2
+                | 電話番号
+              .col-7.col-sm-10.fw-bold
+                | #{@reservation.customer.phone.presence  || "-"}
+
+            .row.py-2 style="background:#EEEEEE;"
+              .col-5.col-sm-2
+                | メール
+              .col-7.col-sm-10.fw-bold
+                | #{@reservation.customer.email.presence  || "-"}
+
+            .row.py-2
+              .col-5.col-sm-2
+                | 作業場所住所
+              .col-7.col-sm-10.fw-bold
+                | #{(@reservation&.working_location&.full_address).presence || "-"}
+
+            .row.py-2 style="background:#EEEEEE;"
+              .col-5.col-sm-2
+                | 作業スタッフ名
+              .col-7.col-sm-10.fw-bold
+                | #{@reservation.staff&.full_name.presence || "-"}
+
+            .row.py-2
+              .col-5.col-sm-2
+                | 開始時刻
+              .col-7.col-sm-10.fw-bold
+                | #{@reservation.start_at.strftime('%Y/%m/%d %H:%M').presence || "-"}
+
+            .row.py-2 style="background:#EEEEEE;"
+              .col-5.col-sm-2
+                | 終了時刻
+              .col-7.col-sm-10.fw-bold
+                | #{@reservation.end_at.strftime('%Y/%m/%d %H:%M').presence || "-"}
+
+            .row.py-2
+              .col-5.col-sm-2
+                | ステータス
+              .col-7.col-sm-10.fw-bold
+                | #{@reservation.status_i18n.presence || "-"}
+
+            .row.py-2 style="background:#EEEEEE;"
+              .col-5.col-sm-2
+                | ご連絡事項
+              .col-7.col-sm-10.fw-bold
+                | #{simple_format(@reservation.memo) || "-"}
+
+            .row.py-2
+              .col-5.col-sm-2
+                | 合計金額
+              .col-7.col-sm-10.fw-bold
+                | #{@reservation&.total_price.present? ? "¥#{@reservation&.total_price}" : "-"}
+                | #{@reservation&.travel_fee.present? ? " (内出張料: ¥#{@reservation&.travel_fee&.to_s(:delimited)})" : " (内出張料: 未設定)"}
+
+        - if @reservation.reservation_infos.present?
+          - @reservation.reservation_infos.each.with_index(1) do |info, index|
+            .card.col-sm-12.shadow.p-3.mb-4.bg-body.rounded
+              .card-header.bg-white.border-bottom
+                .card-title.d-inline-flex.flex-row.align-items-center.mt-2
+                  span.text-dark.fs-4 予約車#{index}台目
+              .card-body.fs-6
+                .row.py-2 style="background:#EEEEEE;"
+                  .col-5.col-sm-2
+                    | 車サイズ
+                  .col-7.col-sm-10.fw-bold
+                    | #{info.car_size.name.presence  || "-"}
+                .row.py-2
+                  .col-5.col-sm-2
+                    | 洗車コース名
+                  .col-7.col-sm-10.fw-bold
+                    | #{info.car_wash_menu.name.presence  || "-"}
+                .row.py-2 style="background:#EEEEEE;"
+                  .col-5.col-sm-2
+                    | 金額
+                  .col-7.col-sm-10.fw-bold
+                    | #{info&.car_wash_menu.price&.to_fs(:delimited).present? ? "¥#{info&.car_wash_menu&.price.to_fs(:delimited)}" : "-"}
+                .row.py-2
+                  .col-5.col-sm-2
+                    | 車種名
+                  .col-7.col-sm-10.fw-bold
+                    | #{info.car_model_name.presence || "-"}
+
+                - if info.reservation_car_wash_options.present?
+                  - info.reservation_car_wash_options.each.with_index(1) do |option, index|
+                    - style = index.odd? ? "background: #EEEEEE" : ""
+                    .row.py-2 style="#{style}"
+                      .col-5.col-sm-2
+                        | オプション#{index}
+                      .col-7.col-sm-10.fw-bold
+                        | #{option.car_wash_option.name}/¥#{option&.car_wash_option&.price&.to_fs(:delimited)}
+
+      .col-lg-5
+        .card.col-sm-12.shadow.mb-3.rounded
+          .card-header
+            .card-title.text-center.mt-2
+              span 予約変更依頼
+          .card-body
+            .d-flex.justify-content-center
+            .col-12
+          - if @reservation.request_changes.present?
+            - request_changes = @reservation.request_changes.where(status: "unread").order(created_at: "desc").map(&:id).push(@reservation.request_changes.where(status: "read").order(created_at: "desc").map(&:id)).flatten!
+            - @reservation.request_changes.find(request_changes).sort_by{ |o| request_changes.index(o.id)}.each.with_index(1) do |order, index|
+              .row.border.shadow.rounded.col-10.mb-3.mx-auto
+                .row.p-0.m-0
+                  - if order.unread?
+                    .col-1 style="border-right: 15px solid transparent;border-top: 15px solid #C0C0C0;position: relative;padding: 0; width:0; higth:0;"
+                    .col-10.my-2
+                      .row.border-bottom
+                        .col-3.small.p-0
+                          | 種別
+                        .col-9
+                          p.m-0.text-dark.small.text-start
+                              | #{order.reservation_type_i18n.presence  || "-"}
+                      .row
+                        .col-3.small.p-0
+                          | 依頼内容
+                        .col-9
+                          p.m-0.text-dark.small.text-start
+                              | #{simple_format(order.memo).presence  || "-"}
+                      .row.col-12.text-right.mx-3
+                        .col-11.d-flex.justify-content-end
+                          = link_to request_read_reservation_path(request_change_id: order.id, id: params[:id], status: "read"), class: "text-decoration-none mb-1" do
+                            .text-dark.small
+                              i.bi.bi-pencil-square
+                              | チェック
+
+                  - else
+                    .col-1 style="border-right: 15px solid transparent;border-top: 15px solid #f2cb05;position: relative;padding: 0; width:0; higth:0;"
+                    .col-10.my-2
+                      .row.border-bottom
+                        .col-3.small.p-0
+                          | 種別
+                        .col-9
+                          p.m-0.text-dark.small.text-start
+                              | #{order.reservation_type_i18n.presence  || "-"}
+                      .row
+                        .col-3.small.p-0
+                          | 依頼内容
+                        .col-9
+                          p.m-0.text-dark.small.text-start
+                              | #{simple_format(order.memo).presence  || "-"}
+
+    .row.border-top.btn-toolbar style="padding:20px;"
+      - if @reservation&.reservation_infos.present?
+        center
+          = render partial: "components/edit_btn", locals: { label_name: "編集する", path: edit_reservation_path(@reservation.id) }
+      - else
+        .col-sm-6.col-md-6.col-6.d-flex.justify-content-end
+          = render partial: "components/edit_btn", locals: { label_name: "編集する", path: edit_reservation_path(@reservation.id) }
+        .col-sm-6.col-md-6.col-6
+          = render partial: "components/delete_btn", locals: { path: reservation_path(@reservation.id) }
