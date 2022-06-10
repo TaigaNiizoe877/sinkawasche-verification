@@ -10,7 +10,7 @@ class StaffsController < ApplicationController
   end
 
   def show
-    @staff = Staff.find(id: params[:id])
+    @staff = Staff.find_by(id: params[:id])
   end
 
   def new
