@@ -1,0 +1,12 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+create_table 'reservation_car_wash_options', options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC', force: :cascade do |t|
+    t.bigint :reservation_info_id
+    t.integer :car_wash_option_id
+
+    t.datetime :discarded_at
+    t.datetime :created_at
+    t.datetime :updated_at
+end
+
+add_index :reservation_car_wash_options, :discarded_at
