@@ -4,6 +4,7 @@ class CarSize < ApplicationRecord
   include Discard::Model
 
   has_one :reservation_info
+  has_many :car_wash_options
   validates :name, presence: true
   validates :memo, presence: true
 

@@ -92,7 +92,7 @@ class ReservationsController < ApplicationController
   end
 
   private
-    def search_index(params, reservations=nil)
+    def search_index(params, reservations = nil)
       # メニュー曖昧検索
       reservations = params[:menu_id].present? ? reservations.where(id: CarWashMenu.find_by(id: params[:menu_id])&.reservation_infos&.map(&:reservation_id)) : reservations
       # 名前曖昧検索
