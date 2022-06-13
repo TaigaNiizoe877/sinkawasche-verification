@@ -1,0 +1,39 @@
+main
+  .col-12.col-md-11.m-auto
+    .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.mt-md-5.mt-4.mb-2.border-bottom.border-4
+      .ps-2.fs-3 洗車コース一覧
+      .d-none.d-sm-inline.d-md-inline.d-lg-inline.d-xl-inline.d-xxl-inline
+        = render partial: "components/new_btn", locals: { label_name: "洗車コース", path: new_car_wash_menu_path(@car_wash_menu) }
+      .d-inline.d-sm-none.d-md-none.d-lg-none.d-xl-none.d-xxl-none
+        = render partial: "components/new_btn", locals: { label_name: "洗車OP", path: new_car_wash_menu_path(@car_wash_menu) }
+    = render partial: "components/flash_messages"
+
+    .card.col-sm-12.shadow-sm.p-3.mb-5.bg-body.rounded
+      table.table.table.table-striped.table-sm.mb-3
+        thead
+          tr
+            th.col-sm-3.px-2 = CarWashMenu.human_attribute_name(:name)
+            th.col-sm-2 = CarWashMenu.human_attribute_name(:price)
+            th.col-sm-1.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell = CarSize.human_attribute_name(:name)
+            th.col-sm-1.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell = "状態"
+            th.col-sm-1.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell = "作業時間"
+
+        tbody
+          - @car_wash_menus.each do |menu|
+            tr
+              td.td_vertical_align_middle.px-2 = menu.name
+              td.td_vertical_align_middle = menu.price_jpy
+              td.td_vertical_align_middle.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell = menu&.car_size&.name
+              td.td_vertical_align_middle.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell = menu.status ? "公開" : "非公開"
+              td.td_vertical_align_middle.d-none.d-sm-table-cell.d-md-table-cell.d-lg-table-cell.d-xl-table-cell.d-xxl-table-cell #{menu.required_time}分
+              td.td_vertical_align_middle
+                .btn-group.dropstart.d-flex.flex-row-reverse.px-1
+                  span.bi.bi-three-dots[aria-expanded="false" data-bs-toggle="dropdown" type="button" style="color: #black; font-size: 20px"]
+                  ul.dropdown-menu
+                    li
+                      = link_to "閲覧", "#{car_wash_menu_path(menu.id)}", { method: :get, class: "dropdown-item" }
+                    li
+                      = link_to "編集する", "#{edit_car_wash_menu_path(menu.id)}", { method: :get, class: "dropdown-item", data: { turbo: false } }
+                    - unless menu&.reservation_infos.present?
+                      li
+                        = button_to "削除", "#{car_wash_menu_path(menu.id)}", { method: :delete, form: { data: { turbo_confirm: "本当に削除しますか？" }}, class: "dropdown-item" }

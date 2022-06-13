@@ -55,6 +55,7 @@ Rails.application.routes.draw do
     get "copy", on: :member
   end
   resources :car_wash_options
+  resources :car_wash_menus
   resources :reservations do
     post "/send_email", to: "reservations#send_email", on: :member
     get "/request_read", to: "reservations#request_read", on: :member
