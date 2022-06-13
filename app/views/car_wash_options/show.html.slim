@@ -1,0 +1,70 @@
+main
+  .col-12.col-md-11.m-auto
+    .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.mt-5.mb-2.border-bottom.border-4
+      .ps-2.d-flex.align-items-center
+        .fs-3 洗車オプション詳細
+        = link_to "一覧に戻る", "#{car_wash_options_path}", { method: :index, class: "bi bi-chevron-left ps-4 pt-2" }
+      .btn-toolbar.mb-2.mb-md-0.d-none.d-sm-flex
+        = render partial: "components/edit_btn", locals: { label_name: "編集する", path: edit_car_wash_option_path(@car_wash_option.id) }
+        - unless @car_wash_option&.reservation_infos.present?
+          = render partial: "components/delete_btn", locals: { path: car_wash_option_path(@car_wash_option.id) }
+
+    .card.col-sm-12.shadow.p-3.mb-4.bg-body.rounded
+      .card-body[style="background:#EEEEEE;"]
+        .row
+          .col-5.col-sm-2
+            = CarWashOption.human_attribute_name(:name)
+          .col-7.col-sm-10.fw-bold
+            = @car_wash_option.name.presence || "-"
+
+      .card-body
+        .row
+          .col-5.col-sm-2
+            = CarWashOption.human_attribute_name(:price)
+          .col-7.col-sm-10.fw-bold
+            = @car_wash_option.price_jpy.presence || "-"
+
+      .card-body[style="background:#EEEEEE;"]
+        .row
+          .col-5.col-sm-2
+            = CarWashOption.human_attribute_name(:status)
+          .col-7.col-sm-10.fw-bold
+            = @car_wash_option.status ? "公開" : "非公開"
+
+      .card-body
+        .row
+          .col-5.col-sm-2
+            = CarSize.human_attribute_name(:name)
+          .col-7.col-sm-10.fw-bold
+            = @car_wash_option.car_size&.name.presence || "-"
+
+      .card-body[style="background:#EEEEEE;"]
+        .row
+          .col-5.col-sm-2
+            | #{CarWashOption.human_attribute_name(:required_time)} (単位:分)
+          .col-7.col-sm-10.fw-bold
+            | #{@car_wash_option&.required_time.presence || "-"} 分
+
+      .card-body
+        .row
+          .col-5.col-sm-2
+            = CarWashOption.human_attribute_name(:memo)
+          .col-7.col-sm-10.fw-bold
+            = @car_wash_option.memo.presence || "-"
+
+      .card-body[style="background:#EEEEEE;"]
+        .row
+          .col-5.col-sm-2
+            = CarWashOption.human_attribute_name(:detail_memo)
+          .col-7.col-sm-10.fw-bold
+            = simple_format(@car_wash_option.detail_memo).presence || "-"
+
+    .row.border-top.btn-toolbar[style="padding:20px;"]
+      - if @car_wash_option&.reservation_car_wash_options.present?
+        center
+          = render partial: "components/edit_btn", locals: { label_name: "編集する", path: edit_car_wash_option_path(@car_wash_option.id) }
+      - else
+        .col-sm-6.col-md-6.col-6.d-flex.justify-content-end
+          = render partial: "components/edit_btn", locals: { label_name: "編集する", path: edit_car_wash_option_path(@car_wash_option.id) }
+        .col-sm-6.col-md-6.col-6
+          = render partial: "components/delete_btn", locals: { path: car_wash_option_path(@car_wash_option.id) }
