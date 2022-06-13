@@ -125,3 +125,5 @@ gem "devise-i18n"
 gem "i18n_generators"
 
 gem "activerecord-session_store"
+
+gem "html2slim"

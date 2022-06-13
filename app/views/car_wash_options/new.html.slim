@@ -1,0 +1,10 @@
+main
+  .col-12.col-md-11.m-auto
+    .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.mt-5.mb-2.border-bottom.border-4
+      .ps-4.d-flex.align-items-center
+        .fs-3 洗車オプション新規作成
+        = link_to "一覧に戻る", "#{car_wash_options_path}", { method: :index, class: "bi bi-chevron-left ps-4 pt-2" }
+
+    = form_with model: @car_wash_option, url: car_wash_options_path, data: { turbo: false } do |f|
+      = render partial: "components/error_messages", locals: { form: f.object }
+      = render partial: "form", locals: { f: f }
