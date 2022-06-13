@@ -25,6 +25,10 @@
         span.fs-5.fw-bold マスター管理
       hr
       li.nav-item
+        = render partial: "components/sidebar_link", locals: { label_name: "洗車コースマスタ", path: "/car_wash_menus", class_name: "nav-link bi bi-newspaper fs-6" }
+
+
+      li.nav-item
         = render partial: "components/sidebar_link", locals: { label_name: "オプションマスタ", path: "/car_wash_options", class_name: "nav-link bi bi-newspaper fs-6" }
 
       li.nav-item

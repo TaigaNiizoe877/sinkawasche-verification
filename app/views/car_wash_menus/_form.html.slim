@@ -1,0 +1,36 @@
+.card.col-sm-12.shadow.p-3.mb-5.bg-body.rounded
+  .col-sm-6.pb-2
+    label.pb-2 コース
+    = f.text_field :name, class: "form-control"
+  .col-sm-6.pb-2
+    h5.mt-1.border-bottom コース詳細
+  .col-sm-6.pb-2
+    label.pb-2 公開
+    .form-check.form-switch[style="padding: 0px 0px 0px 50px;"]
+      = f.check_box :status, style: "transform: scale(2);", class: "form-check-input"
+  - if f.object.new_record?
+    .col-sm-6.pb-2
+      label.pb-2 サイズ
+      = f.select :car_size_id, options_for_select(CarSize.all.pluck(:name, :id), f.object.car_size_id), {}, {class: 'form-select'}
+    .col-sm-6.pb-2
+      label.col-sm-6.pb-2 金額
+      = f.text_field :price, class: "form-control", type: "number"
+  - else
+    .col-sm-6.pb-2
+      label.pb-2 サイズ
+      = f.select :car_size_id, options_for_select(CarSize.all.pluck(:name, :id), f.object.car_size_id), {}, {class: 'form-select', disabled: "disabled"}
+    .col-sm-6.pb-2
+      label.col-sm-6.pb-2 金額
+      = f.text_field :price, class: "form-control", type: "number", disabled: "disabled"
+  .col-sm-6.pb-2
+    label.pb-2 作業時間 (単位:分)
+    = f.text_field :required_time, class: "form-control", type: "number"
+  .col-sm-6.pb-2
+    label.pb-2 コース説明
+    = f.text_field :memo, class: "form-control"
+  .col-sm-8.pb-2
+    label.pb-2 コース詳細説明
+    = f.text_area :detail_memo, size: "30x10", class: "form-control"
+
+center.pb-5
+  = render partial: "components/submit_btn", locals: { f: f }
