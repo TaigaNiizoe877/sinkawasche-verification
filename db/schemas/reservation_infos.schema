@@ -3,6 +3,7 @@
 create_table 'reservation_infos', options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC', force: :cascade do |t|
     t.bigint :reservation_id
     t.integer :car_size_id
+    t.integer :car_wash_menu_id
     t.string :car_model_name
 
     t.datetime :discarded_at
