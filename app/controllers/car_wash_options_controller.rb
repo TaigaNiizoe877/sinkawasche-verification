@@ -3,7 +3,7 @@ class CarWashOptionsController < ApplicationController
   before_action :authenticate_role_admin!
 
   def index
-    car_wash_options = CarWashOption.all
+    car_wash_options = search_index(params)
     @car_wash_options = car_wash_options.order(created_at:"desc").page(params[:page]).per(5)
   end
 
@@ -59,6 +59,12 @@ class CarWashOptionsController < ApplicationController
   end
 
   private
+    def search_index(params)
+      car_wash_options = CarWashOption.all
+      car_wash_options = car_wash_options.where("name LIKE(?)", "%#{params[:name].strip}%") if params[:name].present?
+      car_wash_options
+    end
+
     def car_wash_option_params
       params.require(:car_wash_option)
             .permit(:car_size_id, :name, :price, :required_time, :status, :recommend, :memo, :detail_memo)

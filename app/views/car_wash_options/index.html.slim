@@ -1,3 +1,5 @@
+= javascript_include_tag "option"
+
 main
   .col-12.col-md-11.m-auto
     .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.mt-md-5.mt-4.mb-2.border-bottom.border-4
@@ -7,6 +9,22 @@ main
       .d-inline.d-sm-none.d-md-none.d-lg-none.d-xl-none.d-xxl-none
         = render partial: "components/new_btn", locals: { label_name: "洗車OP", path: new_car_wash_option_path(@car_wash_option) }
     = render partial: "components/flash_messages"
+    #accordionFlushExample.accordion.accordion-flush.shadow.p-1.mb-2.bg-body.rounded.col-sm-6
+      .accordion-item
+        h2#flush-headingOne.accordion-header
+          button.accordion-button.collapsed aria-controls="flush-collapseOne" aria-expanded="false" data-bs-target="#flush-collapseOne" data-bs-toggle="collapse" type="button"
+            | 検索
+        #flush-collapseOne.accordion-collapse.collapse aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample"
+          .accordion-body
+            = form_with url: car_wash_options_path, data: { turbo: false }, local: false, method: :get do |f|
+              .row.mb-3
+                label.col-sm-3.col-form-label.fst-italic オプション名
+                .col-sm-9
+                  = f.text_field :name, value: params[:name], class: "form-control", placeholder: "プレミアム"
+              .col-12.d-flex.justify-content-end
+                button.btn.btn-outline-primary.mx-1.shadow.rounded-pill.px-4
+                  |検索
+                  i.bi.bi-search
 
     .card.col-sm-12.shadow-sm.p-3.mb-5.bg-body.rounded
       table.table.table.table-striped.table-sm.mb-3
@@ -40,4 +58,18 @@ main
                       li
                         = button_to "削除", "#{car_wash_option_path(option.id)}", { method: :delete, form: { data: { turbo_confirm: "本当に削除しますか？" }}, class: "dropdown-item" }
 
-= paginate @car_wash_options
+    = paginate @car_wash_options
+
+    #accordionFlushExample.accordion.accordion-flush.shadow.p-1.mb-2.bg-body.rounded.col-sm-6
+      .accordion-item
+        h2#flush-headingOne.accordion-header
+          button.accordion-button.collapsed aria-controls="flush-collapseTwo" aria-expanded="false" data-bs-target="#flush-collapseTwo" data-bs-toggle="collapse" type="button"
+            | Ajax用の検索
+        #flush-collapseTwo.accordion-collapse.collapse aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample"
+          .accordion-body
+              .row.mb-3
+                label.col-sm-3.col-form-label.fst-italic オプション名
+                .col-sm-9
+                  = text_field :name, '',class: "option form-control", placeholder: "プレミアム"
+    ul.js-options
+      = render @options if @options.present?
