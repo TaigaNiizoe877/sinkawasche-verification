@@ -46,3 +46,5 @@
 
 # Ignore cassettes file
 /spec/cassettes
+
+/.env

@@ -127,3 +127,9 @@ gem "i18n_generators"
 gem "activerecord-session_store"
 
 gem "html2slim"
+
+gem "whenever"
+
+gem "slack-notifier"
+
+gem 'dotenv-rails'

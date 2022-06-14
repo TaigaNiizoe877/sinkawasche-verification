@@ -82,4 +82,21 @@ class Reservation < ApplicationRecord
     required_minutes = minutes.sum
     required_minutes
   end
+
+  def notification_reservation_just_to_slack
+    notification_to_slack("予約情報です。ステータス：#{self.status_i18n} お客様：#{self.customer.full_name} 作業時刻：#{self.start_at.strftime('%Y/%m/%d')} #{self.start_at.strftime('%H:%M')} ~ #{self.end_at.strftime('%H:%M')}")
+  end
+
+  def notification_reservation_week_to_slack
+    notification_to_slack("一週間の予約情報です。ステータス：#{self.status_i18n} お客様：#{self.customer.full_name} 作業時刻：#{self.start_at.strftime('%Y/%m/%d')} #{self.start_at.strftime('%H:%M')} ~ #{self.end_at.strftime('%H:%M')}")
+  end
+
+  def notification_to_slack(message)
+    notifier = Slack::Notifier.new(
+      ENV["SLACK_WEBHOOK_URL"],
+      username: "新添太雅"
+    )
+    notifier.ping message
+  end
 end
+

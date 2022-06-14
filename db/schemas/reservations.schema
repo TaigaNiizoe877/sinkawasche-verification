@@ -12,6 +12,7 @@ create_table 'reservations', options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COL
     t.integer :total_price
     t.text :memo
     t.boolean :sent_email, null: false, default: false
+    t.boolean :notified_to_slack, default: false
 
     t.datetime :discarded_at
     t.datetime :created_at
