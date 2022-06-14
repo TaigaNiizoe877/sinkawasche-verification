@@ -34,6 +34,8 @@ main
                       = link_to "閲覧", "#{car_wash_option_path(option.id)}", { method: :get, class: "dropdown-item" }
                     li
                       = link_to "編集する", "#{edit_car_wash_option_path(option.id)}", { method: :get, class: "dropdown-item", data: { turbo: false } }
+                    li
+                      = link_to "コピー", "#{copy_car_wash_option_path(option.id)}", { method: :get, class: "dropdown-item", data: { turbo: false } }
                     - unless option&.reservation_car_wash_options.present?
                       li
                         = button_to "削除", "#{car_wash_option_path(option.id)}", { method: :delete, form: { data: { turbo_confirm: "本当に削除しますか？" }}, class: "dropdown-item" }
