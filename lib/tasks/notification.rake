@@ -15,4 +15,21 @@ namespace :notification do
     end
     puts "reservation:just_to_slack... end"
   end
+
+  desc "当日から一週間以内の予約内容をslackに通知"
+  task reservation_week_to_slack: :environment do
+    puts "reservation:week_to_slack... start"
+    reservations = Reservation.where("start_at <= ?", Time.zone.now.since(7.day))
+    puts "対象件数：#{reservations.count}件"
+    if reservations.present?
+      reservations.map do |reservation|
+        unless reservation.notified_to_slack
+          reservation.notification_reservation_week_to_slack
+          reservation.notified_to_slack = true
+          reservation.save!
+        end
+      end
+    end
+    puts "reservation:week_to_slack... end"
+  end
 end
