@@ -39,3 +39,5 @@ main
                     - unless option&.reservation_car_wash_options.present?
                       li
                         = button_to "削除", "#{car_wash_option_path(option.id)}", { method: :delete, form: { data: { turbo_confirm: "本当に削除しますか？" }}, class: "dropdown-item" }
+
+= paginate @car_wash_options

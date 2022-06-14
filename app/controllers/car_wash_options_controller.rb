@@ -4,7 +4,7 @@ class CarWashOptionsController < ApplicationController
 
   def index
     car_wash_options = CarWashOption.all
-    @car_wash_options = car_wash_options.order(created_at:"desc")
+    @car_wash_options = car_wash_options.order(created_at:"desc").page(params[:page]).per(5)
   end
 
   def show
