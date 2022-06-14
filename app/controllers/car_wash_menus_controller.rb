@@ -11,6 +11,11 @@ class CarWashMenusController < ApplicationController
     @car_wash_menu = CarWashMenu.find_by(id: params[:id])
   end
 
+  def copy
+    @car_wash_menu = CarWashMenu.find_by(id: params[:id]).deep_dup
+    render "new"
+  end
+
   def new
     @car_wash_menu = CarWashMenu.new
   end
